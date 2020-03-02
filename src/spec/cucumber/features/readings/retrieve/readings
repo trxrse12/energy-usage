@@ -1,0 +1,5 @@
+Feature: Retrieve Readings
+
+Clients should be able to retrieve a list of readings.
+
+Scenario:

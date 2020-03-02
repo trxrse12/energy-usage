@@ -9,6 +9,7 @@
     "build-types": "babel src --out-dir dist --extensions \".ts,.tsx,\" --source-maps --copy-files",
     "build": "yarn clean && yarn type-check && yarn build-types",
     "serve": "yarn build && node dist/index.js",
+    "test:e2e": "./node_modules/.bin/cucumber-js --exit -p default",
     "test: unit": "mocha --exit -r ts-node/register -r tsconfig-paths/register --watch-extensions ts src/**/*.unit.test.ts",
     "test:unit:one": "mocha --exit --colors -r ts-node/register  --watch-extensions ts --watch -r tsconfig-paths/register src/**/*.unit.test.ts -g",
     "watch": "nodemon --signal SIGHUP -L -w ./src --exec yarn run serve",
