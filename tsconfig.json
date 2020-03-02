@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    // target the latest version of JS
+    "target": "esnext",
+    // Search under node_modules for non-relative imports
+    "moduleResolution": "node",
+    // Allow the import of JSON modules
+    "resolveJsonModule": true,
+    // Process and infer types from .js files
+    "allowJs": true,
+    // Don't emit, allow Babel to transform files
+    "noEmit": true,
+    // Enable strictest settings:
+    //    --noImplicitThis (complains if type of this is not clear);
+    //    --noImplicitAny (no car left undeclared - you have to define any single type - params of fctions and methods - in your app);
+    //    --strictNullChecks (to ensure you never try to access a property of a null value - e.g. optional props in interfaces);
+    //    --alwaysStrict: use JS strict mode whenever possible
+    "strict": true,
+    // Allow features that require cross-file information for emit.
+    "isolatedModules": false,
+    // Import non-ES modules as default imports
+    "esModuleInterop": true,
+    // protect against forgetting to use explicit returns from functions
+    "noImplicitReturns": true,
+    // no unused locals
+    // "noUnusedLocals": true,
+    // protect against forgetting the breaks in switch
+    "noFallthroughCasesInSwitch": true,
+    // Force consistent casing in file names
+    "forceConsistentCasingInFileNames": true,
+    // Enable experimental decorators, to be able to use cucumber in typescript
+    "experimentalDecorators": true,
+    //
+    // "prefer-array-literal": [true, {"allow-type-parameters":  true}],
+    // Allow the creation of source map files
+    "sourceMap": true,
+    "inlineSources":  true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "baseUrl": "./src/"
+  },
+  "paths": {
+    "*": [
+      "node_modules"
+    ]
+  },
+  "include": [
+    "src"
+  ]
+}

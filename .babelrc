@@ -1,0 +1,23 @@
+{
+  "presets": [
+    "@babel/env",
+    "@babel/preset-typescript"
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/proposal-class-properties", { "loose": true }],
+    "@babel/proposal-object-rest-spread",
+    ["@babel/plugin-proposal-json-strings"],
+    [
+      "module-resolver",
+      {
+        "root": ["."],
+        "extensions": [
+          ".js", ".ts", ".tsx", ".json"
+        ],
+        "alias": {
+        }
+      }
+    ]
+  ]
+}

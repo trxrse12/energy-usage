@@ -1,0 +1,51 @@
+{
+  "name": "service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "clean": "rimraf dist",
+    "type-check": "tsc",
+    "build-types": "babel src --out-dir dist --extensions \".ts,.tsx,\" --source-maps --copy-files",
+    "build": "yarn clean && yarn type-check && yarn build-types",
+    "serve": "yarn build && node dist/index.js",
+    "test: unit": "mocha --exit -r ts-node/register -r tsconfig-paths/register --watch-extensions ts src/**/*.unit.test.ts",
+    "test:unit:one": "mocha --exit --colors -r ts-node/register  --watch-extensions ts --watch -r tsconfig-paths/register src/**/*.unit.test.ts -g",
+    "watch": "nodemon --signal SIGHUP -L -w ./src --exec yarn run serve",
+    "dev": "tsc-watch --onSuccess \"yarn serve\"",
+    "explo": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec ts-node src/engines/cpm/retrieve/index.ts",
+    "coverage": "nyc --reporter=html npm run test:unit:one"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
+    "@babel/polyfill": "^7.8.3",
+    "@babel/preset-env": "^7.8.6",
+    "@babel/preset-typescript": "^7.8.3",
+    "@babel/register": "^7.8.6",
+    "koa": "2.5.1",
+    "koa-router": "7.4.0",
+    "sqlite3": "4.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/koa": "^2.0.48",
+    "@types/koa-router": "^7.0.40",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^11.11.0",
+    "@types/sqlite3": "^3.1.5",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "chai": "4.1.2",
+    "mocha": "5.2.0",
+    "nodemon": "^1.18.11",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.3.3333"
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}

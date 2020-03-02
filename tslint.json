@@ -1,0 +1,16 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint-config-airbnb",
+    "tslint-microsoft-contrib/recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "trailing-comma": [ true ],
+    "no-any": true,
+    "no-null-keyword": true,
+    "no-relative-imports": true,
+    "no-unused-variable": true
+  },
+  "rulesDirectory": ["node_modules/tslint-microsoft-contrib"]
+}
