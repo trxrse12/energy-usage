@@ -67,3 +67,6 @@ Notes:
      
 
 4. 11.40 am >>> start developing the first route, /GET
+    a. set up the infrastructure to use Cucumber.js on the compiled dist/spec folder
+    b. Write the 1st cucumber feature file, readings.feature
+    c.  

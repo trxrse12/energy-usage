@@ -1,7 +1,12 @@
 import { When, Then } from 'cucumber';
+import superagent from 'superagent';
+
+let request;
+let result;
+let error;
 
 When('the client creates a POST request to /readings', function(cb){
-  cb(null, 'pending');
+  request = superagent('POST', 'localhost:3000/readings');
 });
 
 When('attaches a generic empty payload', function(cb){
