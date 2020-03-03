@@ -29,6 +29,11 @@ When('attaches a generic empty payload', function(){
   return undefined;
 });
 
+When('attaches a generic non-JSON payload', function(){
+  request.send('<?xml version="1.0" encoding="UTF-8"?><value>10000</value>');
+  request.set('Content-Type', 'text/xml');
+});
+
 When('sends the request', function(cb){
   // @ts-ignore
   request
@@ -51,6 +56,17 @@ Then('our API should respond with a 400 HTTP status code', function () {
     if (error && error.statusCode && error.statusCode !==400) {
       throw new AssertionError({
         expected: 400,
+        actual: response?.status
+      });
+    }
+  };
+});
+
+Then('our API should respond with a 415 HTTP status code', function () {
+  {
+    if (error && error.statusCode && error.statusCode !==415) {
+      throw new AssertionError({
+        expected: 415,
         actual: response?.status
       });
     }
@@ -87,6 +103,18 @@ Then('contains a message property which says "Payload should not be empty"', fun
   // console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP payload=', payload)
   if(payload && (!payload.text || !payload?.text?.includes('Payload should not be empty'))){
     throw new Error('Invalid response for empty payload');
+  }
+  // if it got to this point it passed the test
+});
+
+
+Then('contains a message property which says \'The "Content-Type" header must always be "application/json"\'', function(){
+  // console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP payload=', payload)
+  if(payload && (!payload.text || !payload?.text?.includes('The "Content-Type" header must always be "application/json"\''))){
+    throw new AssertionError({
+      expected: 'The "Content-Type" header must always be "application/json"',
+      actual: payload?.text
+    });
   }
   // if it got to this point it passed the test
 });
