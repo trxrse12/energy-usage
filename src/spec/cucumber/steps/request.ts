@@ -2,6 +2,7 @@ import { When, Then } from 'cucumber';
 import superagent from 'superagent';
 import {Request, Response} from 'koa';
 import {ServerResponse} from 'http';
+import assert from 'assert';
 import {AssertionError} from 'assert';
 
 interface Error{
@@ -33,6 +34,11 @@ When('attaches a generic empty payload', function(){
 When('attaches a generic non-JSON payload', function(){
   request.send('<?xml version="1.0" encoding="UTF-8"?><value>10000</value>');
   request.set('Content-Type', 'text/xml');
+});
+
+When('attaches a generic malformed payload', function(){
+  request.send('{"cumulative": 22300, "readingDate": }');
+  request.set('Content-Type', 'application/json');
 });
 
 When('sends the request', function(cb){
@@ -117,4 +123,8 @@ Then(/^contains a message property which says 'The "Content-Type" header must al
     throw new Error('The "Content-Type" header must always be "application/json"');
   }
   // if it got to this point it passed the test
+});
+
+Then(/^contains a message property which says 'Payload should be in JSON format'$/, function(){
+  assert.deepStrictEqual(payload?.text, 'Payload should be in JSON format');
 });

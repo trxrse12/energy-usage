@@ -15,7 +15,7 @@ Notes:
         4. Create the directories structure (explained below);
         5. Start working on the first feature 
 
-1. 9.00 am >>> Standard setup for a Typescipt project:
+1. Standard setup for a Typescipt project:
     * Setting up the dev tools: WebStorm project,  node (nvm), typescript, @types/node, ts-node, tsc-watch, yarn
     * Created the tsconfig.json;
     * Created the dist directory;
@@ -30,16 +30,16 @@ Notes:
     * nodemon
     * scripts in package.json
     
-2. 10.10 am >>> First run of the server to ensure is type-checking and no errors
+2. First run of the server to ensure is type-checking and no errors
 
-3. 10.30am >>> Initialize git flow: 
+3. Initialize git flow: 
     git init
     git add -A && git commit -m "Initial project setup"
     git branch (list the branches)
     git checkout -b dev master (create a dev branch)
     git checkout -b retrieve-readings dev (create a feature sub-branch)
     
-4.  11.20 am >>> Create the necessary directories to modularize the app:
+4.  Create the necessary directories to modularize the app:
     /src/db: the database layer
     
     /src/middlewares: all the middlewares will reside in there
@@ -66,7 +66,8 @@ Notes:
     folder that will contain all the E2E tests specs (feature oriented)
      
 
-4. 11.40 am >>> start developing the first route, /GET
+4. start developing the first route: POST /readings
     a. set up the infrastructure to use Cucumber.js on the compiled dist/spec folder
     b. Write the 1st cucumber feature file, readings.feature
-    c.  
+    c. Added the first two error scenarios for the current route: "Empty Payload" and "Payload with Unsupported Media Type".
+    Obs. More error scenarios have to be added in here in a production server: "Malformed JSON payload"
