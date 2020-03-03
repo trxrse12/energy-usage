@@ -4,6 +4,11 @@
     "@babel/preset-typescript"
   ],
   "plugins": [
+    ["@babel/plugin-transform-runtime",
+      {
+        "regenerator": true
+      }
+    ],
     ["@babel/plugin-proposal-decorators", { "legacy": true }],
     ["@babel/proposal-class-properties", { "loose": true }],
     "@babel/proposal-object-rest-spread",
