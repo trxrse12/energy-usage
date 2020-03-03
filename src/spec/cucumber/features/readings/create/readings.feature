@@ -10,6 +10,7 @@ Feature: Create readings
     And attaches a generic empty payload
     And sends the request
     Then our API should respond with a 400 HTTP status code
-    And the payload of the response should be a JSON object
+    And the header of the response should include "application/json"
+    And the payload of the response should be a valid JSON object
     And contains a message property which says "Payload should not be empty"
 

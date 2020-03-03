@@ -1,21 +1,15 @@
 import Koa from 'koa';
-import KoaRouter from 'koa-router';
-import { initialize } from './data';
+
+import { initialize } from './data'; // init the db
+import { router } from './middlewares/router'
 
 const PORT = process.env.PORT || 3000;
 
 export default function createServer() {
   const server = new Koa();
 
-  const router = new KoaRouter();
-  router.get('/', (ctx, next) => {
-    ctx.body = 'Hello world';
-    next();
-  });
-
   server.use(router.allowedMethods());
   server.use(router.routes());
-
   return server;
 }
 
