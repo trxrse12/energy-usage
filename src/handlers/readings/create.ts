@@ -18,7 +18,11 @@ export const createReading = (ctx: ExtendableContext, next: () => Promise<any>) 
     return
   }
   // the server responds with 200 by default
-  return ctx.body = {
-    data: {message: 'OK'},
-  };
+  // return ctx.body = {
+  //   data: {message: 'OK'},
+  // };
+  ctx.response.status = 400;
+  ctx.body = {
+    data: {message: 'Payload should be in JSON format'}
+  }
 };
