@@ -24,4 +24,4 @@ Feature: Create readings
         Then our API should respond with a 415 HTTP status code
         And the header of the response should include "application/json"
         And the payload of the response should be a valid JSON object
-        And contains a message property which says 'The "Content-Type" header must always be 'application/json'"
+        And contains a message property which says 'The "Content-Type" header must always be "application/json"'

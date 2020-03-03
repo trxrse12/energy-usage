@@ -11,7 +11,8 @@ interface Error{
 
 interface Payload {
   status: number;
-  text: string
+  text?: string,
+  data?: string,
 }
 
 let request: superagent.SuperAgentRequest;
@@ -56,7 +57,7 @@ Then('our API should respond with a 400 HTTP status code', function () {
     if (error && error.statusCode && error.statusCode !==400) {
       throw new AssertionError({
         expected: 400,
-        actual: response?.status
+        actual: error.statusCode
       });
     }
   };
@@ -108,13 +109,12 @@ Then('contains a message property which says "Payload should not be empty"', fun
 });
 
 
-Then('contains a message property which says \'The "Content-Type" header must always be "application/json"\'', function(){
-  // console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP payload=', payload)
-  if(payload && (!payload.text || !payload?.text?.includes('The "Content-Type" header must always be "application/json"\''))){
-    throw new AssertionError({
-      expected: 'The "Content-Type" header must always be "application/json"',
-      actual: payload?.text
-    });
+Then(/^contains a message property which says 'The "Content-Type" header must always be "application\/json"'$/, function(){
+  const cleanStr = (s: string|undefined) => s ? s.replace(/[\\|\/|"]/g,'') : '';
+  const cleanMessage = cleanStr('The "Content-Type" header must always be "application\/json"');
+  const cleanPayloadText = cleanStr(payload?.text);
+  if(payload && payload.text  && !cleanPayloadText.includes(cleanMessage)){
+    throw new Error('The "Content-Type" header must always be "application/json"');
   }
   // if it got to this point it passed the test
 });
