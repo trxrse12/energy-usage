@@ -33,6 +33,7 @@
     "cucumber-pretty": "^6.0.0",
     "cucumber-tsflow": "^3.2.0",
     "koa": "2.5.1",
+    "koa-body": "^4.1.1",
     "koa-router": "7.4.0",
     "sqlite3": "4.0.0"
   },
