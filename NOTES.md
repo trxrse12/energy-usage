@@ -70,4 +70,5 @@ Notes:
     a. set up the infrastructure to use Cucumber.js on the compiled dist/spec folder
     b. Write the 1st cucumber feature file, readings.feature
     c. Added the first two error scenarios for the current route: "Empty Payload" and "Payload with Unsupported Media Type".
-    Obs. More error scenarios have to be added in here in a production server: "Malformed JSON payload"
+    d. Added an error handler middleware to ensure the right level of error control is operational
+    e. 

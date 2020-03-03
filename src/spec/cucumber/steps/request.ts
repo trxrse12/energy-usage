@@ -4,6 +4,8 @@ import {Request, Response} from 'koa';
 import {ServerResponse} from 'http';
 import assert from 'assert';
 import {AssertionError} from 'assert';
+import chai from 'chai';
+const expect = chai.expect;
 
 interface Error{
   response?: unknown;
@@ -126,5 +128,5 @@ Then(/^contains a message property which says 'The "Content-Type" header must al
 });
 
 Then(/^contains a message property which says 'Payload should be in JSON format'$/, function(){
-  assert.deepStrictEqual(payload?.text, 'Payload should be in JSON format');
+  expect(payload?.text).to.include('Payload should be in JSON format');
 });

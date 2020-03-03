@@ -12,8 +12,15 @@ export default function createServer() {
     try {
       await next();
     } catch (err){
-      ctx.status = err.status || 500;
-      ctx.body = err.message;
+      // ctx.status = err.status || 500;
+      // ctx.body = err.message;
+      if (err instanceof SyntaxError
+        && err.message.includes('Unexpected token')){
+        ctx.response.status = 400;
+        ctx.body = {
+          data: {message: 'Payload should be in JSON format'}
+        }
+      }
     }
   });
   server.use(router.allowedMethods());

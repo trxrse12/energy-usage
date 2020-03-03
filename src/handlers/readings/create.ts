@@ -21,8 +21,8 @@ export const createReading = (ctx: ExtendableContext, next: () => Promise<any>) 
   // return ctx.body = {
   //   data: {message: 'OK'},
   // };
-  ctx.response.status = 400;
-  ctx.body = {
-    data: {message: 'Payload should be in JSON format'}
-  }
+  // ctx.response.status = 400;
+  // ctx.body = {
+  //   data: {message: 'Payload should be in JSON format'}
+  // }
 };
