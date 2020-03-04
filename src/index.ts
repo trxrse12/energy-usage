@@ -45,14 +45,13 @@ export default function createServer() {
     try {
       await next();
     } catch (err){
-      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
-      // unknown error
+      // unknown error by default
       ctx.response.status = 500;
       ctx.body = {
         data: {message: 'Unknown internal error'},
       };
-      // ctx.status = err.status || 500;
-      // ctx.body = err.message;
+
+      // Invalid JSON error which results in the body parser
       if (err instanceof SyntaxError
         && err.message.includes('Unexpected token')){
         ctx.response.status = 400;
@@ -60,18 +59,24 @@ export default function createServer() {
           data: {message: 'Payload should be in JSON format'}
         }
       }
+
+      // Empty input in a POST request
       if (err instanceof EmptyInputException){
         ctx.response.status = 400;
         ctx.body = {
           data: {message: 'Payload should not be empty'}
         }
       }
+
+      // Content-Type header not set in a POST request
       if (err instanceof ContentTypeNotSetException){
         ctx.response.status = 400;
         ctx.body = {
           data: {message: 'The "Content-Type" header must be set for requests with a non-empty payload'},
         }
       }
+
+      // Content-type is not set in a POST request
       if (err instanceof ContentTypeIsNotJsonException){
         ctx.response.status = 415;
         ctx.body = {
