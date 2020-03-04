@@ -1,4 +1,5 @@
 import {ExtendableContext, Response} from 'koa';
+import moment from 'moment';
 import {
   InvalidRequestPayloadException,
   UnknownInternalErrorException,
@@ -11,10 +12,13 @@ interface EnergyReadingPayload {
 }
 // custom type guard for the EnergyReadingPayloads
 function isValidEnergyReadingPayload(energyReading: EnergyReadingPayload): energyReading is EnergyReadingPayload {
+  const cumulative = energyReading?.cumulative;
+  const readingDate = energyReading?.readingDate;
+  const unitKwh = energyReading?.unit;
   if (
-    energyReading?.cumulative
-    && energyReading?.readingDate
-    && energyReading?.unit
+    cumulative && typeof cumulative === 'number' && cumulative > 0
+    && readingDate && moment(readingDate).isValid()
+    && energyReading?.unit === 'kWh'
   ) {
     return true;
   }
