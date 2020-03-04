@@ -53,3 +53,14 @@ Feature: Create readings
         | cumulative |
         | readingDate |
         | unit |
+
+
+    Scenario: Minimal valid reading upload
+        If the client sends a valid payload then the app is uploading it to the database
+
+        When the client creates a POST request to /readings
+        And attaches a valid payload
+        And sends the request
+        Then our API should respond with a 201 HTTP status code
+        And the payload of the response should be a valid string
+        And the payload object should be added to the database

@@ -5,34 +5,19 @@ import {ServerResponse} from 'http';
 import assert from 'assert';
 import {AssertionError} from 'assert';
 import chai from 'chai';
+import {EnergyReadingPayload, Payload, ApiError} from "./types";
+import { getValidPayload } from './utils';
 const expect = chai.expect;
 
 // function that helps testing API return messages that contain quotes and slashes
 const cleanStr = (s: string|undefined) => s ? s.replace(/[\\|\/|"]/g,'') : '';
-
-interface Error{
-  response?: unknown;
-  statusCode? :number;
-}
-
-interface Payload {
-  status: number,
-  text?: string,
-  data?: string,
-}
-
-interface EnergyReadingPayload {
-  cumulative: number,
-  readingDate: string,
-  unit: 'kWh',
-}
 
 let request: superagent.SuperAgentRequest;
 let response: Response;
 let result: Response;
 let header: string;
 let payload: Payload;
-let error: Error;
+let error: ApiError;
 
 When('the client creates a POST request to /readings', function(){
   request = superagent('POST', 'http://localhost:3000/readings');
@@ -69,6 +54,13 @@ When(/^attaches an? (.+) payload which is missing the ([a-zA-Z0-9, ]+) fields?$/
     .set('Content-Type', 'application/json');
 });
 
+When(/^attaches a valid (.*)payload$/, function(payloadType){
+  this.requestPayload = getValidPayload(payloadType);
+  request
+    .send(JSON.stringify(this.requestPayload))
+    .set('Content-Type', 'application/json');
+});
+
 When('sends the request', function(cb){
   // @ts-ignore
   request
@@ -80,7 +72,7 @@ When('sends the request', function(cb){
     })
     .catch((errResponse: { response: Error; }) =>{
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
-      error = errResponse.response;
+      error = errResponse.response as unknown as ApiError;
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
       cb();
     })
@@ -127,15 +119,29 @@ Then('the header of the response should include {string}', function(string) {
   }
 });
 
-Then('the payload of the response should be a valid JSON object', function(){
+Then(/^the payload of the response should be a valid ([a-zA-Z0-9, ]+)$/, function(payloadType){
   response = result || error;
-  // Check if is valid JSON
-  // console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY response=', response.status)
-  try {
-    payload = JSON.parse(JSON.stringify(response));
-  } catch (e) {
-    throw new Error('Reponse not a valid JSON object')
+  //console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY response=', response)
+  const contentType = response?.headers['Content-Type'] || response?.headers['content-type'];
+
+  if (payloadType === 'JSON object'){
+    // check Content-Type header
+    if (!contentType || !contentType?.includes('application/json')){
+      throw new Error('Response NOT of Content-Type application/json');
+    }
+    // Check if is valid JSON
+    try {
+      payload = JSON.parse(JSON.stringify(response));
+    } catch (e) {
+      throw new Error('Response not a valid JSON object')
+    }
+  } else if (payloadType === 'string'){
+    // check Content-Type header
+    if (!contentType || !contentType?.includes('text/plain')){
+      throw new Error('Response NOT of Content-Type text/plain');
+    }
   }
+
 });
 
 
