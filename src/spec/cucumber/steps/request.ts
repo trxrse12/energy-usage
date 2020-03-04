@@ -60,6 +60,10 @@ When('sends the request', function(cb){
     })
 });
 
+When(/^without a (?:"|')([\w-]+)(?:"|') header set$/, function(headerName) {
+  request.unset(headerName);
+});
+
 Then('our API should respond with a 400 HTTP status code', function () {
   {
     if (error && error.statusCode && error.statusCode !==400) {
@@ -83,7 +87,6 @@ Then('our API should respond with a 415 HTTP status code', function () {
 });
 
 Then('the header of the response should include {string}', function(string) {
-  response = result || error;
   switch (string) {
     case 'application/json':
       let contentType!: string;
@@ -99,7 +102,9 @@ Then('the header of the response should include {string}', function(string) {
 });
 
 Then('the payload of the response should be a valid JSON object', function(){
+  response = result || error;
   // Check if is valid JSON
+  // console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY response=', response.status)
   try {
     payload = JSON.parse(JSON.stringify(response));
   } catch (e) {

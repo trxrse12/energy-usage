@@ -66,9 +66,16 @@ Notes:
     folder that will contain all the E2E tests specs (feature oriented)
      
 
-4. start developing the first route: POST /readings
+5. start developing the first route: POST /readings
     a. set up the infrastructure to use Cucumber.js on the compiled dist/spec folder
     b. Write the 1st cucumber feature file, readings.feature
     c. Added the first two error scenarios for the current route: "Empty Payload" and "Payload with Unsupported Media Type".
     d. Added an error handler middleware to ensure the right level of error control is operational
     e. 
+    
+    
+    
+Obs. Here are some practical observations:
+    1. it is a good idea to open two terminals in your IDE and to keep the server dev terminal on on the left and the tests dev terminal on the right ==> that will help in dev speed, as you can indep  modify the app or the BDD test code;
+    2. it is a good idea in the BDD code to have a console.print pair of instructions embedded in the "When(sends)" test, as it will help the dev process (it will make easier to see the server response)
+    3. 
