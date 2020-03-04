@@ -27,3 +27,23 @@ export class ContentTypeIsNotJsonException extends Error {
     }
   }
 }
+
+export class InvalidRequestPayloadException extends Error {
+  constructor (...params: (string|undefined)[]) {
+    super(...params);
+    this.name = 'InvalidRequestPayloadException';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, InvalidRequestPayloadException);
+    }
+  }
+}
+
+export class UnknownInternalErrorException extends Error {
+  constructor (...params: (string|undefined)[]) {
+    super(...params);
+    this.name = 'UnknownInternalErrorException';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, UnknownInternalErrorException);
+    }
+  }
+}

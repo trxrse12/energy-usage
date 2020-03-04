@@ -71,7 +71,9 @@ Notes:
     b. Write the 1st cucumber feature file, readings.feature
     c. Added the first two error scenarios for the current route: "Empty Payload" and "Payload with Unsupported Media Type".
     d. Added an error handler middleware to ensure the right level of error control is operational
-    e. 
+    e. Move all the common functions (e.g. checking for empty content, for json request format, etc)
+        into common middleware functions;
+    f. Added a cucumber scenario on input validations    
     
     
     

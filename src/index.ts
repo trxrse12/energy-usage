@@ -5,7 +5,7 @@ import { router } from './middlewares/router'
 import {
   ContentTypeIsNotJsonException,
   ContentTypeNotSetException,
-  EmptyInputException
+  EmptyInputException, InvalidRequestPayloadException
 } from './validators/errors/custom-errors';
 
 const PORT = process.env.PORT || 3000;
@@ -45,6 +45,8 @@ export default function createServer() {
     try {
       await next();
     } catch (err){
+      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
+      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.message=', err.message);
       // unknown error by default
       ctx.response.status = 500;
       ctx.body = {
@@ -81,6 +83,14 @@ export default function createServer() {
         ctx.response.status = 415;
         ctx.body = {
           data: {message: 'The "Content-Type" header must always be "application/json"'},
+        }
+      }
+
+      // Content payload does not represent an energy reading
+      if (err instanceof InvalidRequestPayloadException){
+        ctx.response.status = 400;
+        ctx.body = {
+          data: {message: 'Payload must contain three fields: "cumulative", "readingDate" and "unit" fields'},
         }
       }
     }

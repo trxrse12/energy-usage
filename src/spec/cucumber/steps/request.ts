@@ -63,6 +63,7 @@ When(/^attaches an? (.+) payload which is missing the ([a-zA-Z0-9, ]+) fields?$/
     .map((s: string) => s.trim())
     .filter((s: string) => s !== '');
   fieldsToDelete.forEach((field: keyof EnergyReadingPayload) => delete payload[field]);
+  // console.log('HHHHYYYYYYYYYYYYYHHHHHHHHHHHHHYYYYYYYYYYYY JSON.stringify((payload)=', JSON.stringify(payload));
   request
     .send(JSON.stringify((payload)))
     .set('Content-Type', 'application/json');
@@ -72,7 +73,7 @@ When('sends the request', function(cb){
   // @ts-ignore
   request
     .then((response) => {
-      console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
+      // console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
       result = response?.body;
       header = response?.header;
       cb();
@@ -170,4 +171,15 @@ Then(/^contains a message property which says 'The "Content-Type" header must be
 
 Then(/^contains a message property which says 'Payload should be in JSON format'$/, function(){
   expect(payload?.text).to.include('Payload should be in JSON format');
+});
+
+Then(/^contains a message property which says 'Payload must contain three fields: "cumulative", "readingDate" and "unit" fields'$/, function(){
+  const cleanMessage = cleanStr('Payload must contain three fields: "cumulative", "readingDate" and "unit" fields');
+  const cleanPayloadText = cleanStr(payload?.text);
+  // console.log('CCCCCCCCCCCCCCCCCCCCCCCCCC: cleanMessage=', cleanMessage);
+  // console.log('CCCCCCCCCCCCCCCCCCCCCCCCCC: cleanPayloadText=', cleanPayloadText);
+  if(payload && payload.text  && !cleanPayloadText.includes(cleanMessage)){
+    throw new Error('Payload must contain three fields: "cumulative", "readingDate" and "unit" fields');
+  }
+  // if it got to this point it passed the test
 });
