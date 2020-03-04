@@ -73,7 +73,8 @@ Notes:
     d. Added an error handler middleware to ensure the right level of error control is operational
     e. Move all the common functions (e.g. checking for empty content, for json request format, etc)
         into common middleware functions;
-    f. Added a cucumber scenario on input validations    
+    f. Added a cucumber scenario on input validations  
+    g. Testing the energy reading upload success scenario  
     
     
     
