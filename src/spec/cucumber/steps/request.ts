@@ -7,6 +7,9 @@ import {AssertionError} from 'assert';
 import chai from 'chai';
 const expect = chai.expect;
 
+// function that helps testing API return messages that contain quotes and slashes
+const cleanStr = (s: string|undefined) => s ? s.replace(/[\\|\/|"]/g,'') : '';
+
 interface Error{
   response?: unknown;
   statusCode? :number;
@@ -128,6 +131,15 @@ Then(/^contains a message property which says 'The "Content-Type" header must al
   const cleanPayloadText = cleanStr(payload?.text);
   if(payload && payload.text  && !cleanPayloadText.includes(cleanMessage)){
     throw new Error('The "Content-Type" header must always be "application/json"');
+  }
+  // if it got to this point it passed the test
+});
+
+Then(/^contains a message property which says 'The "Content-Type" header must be set for requests with a non-empty payload'$/, function(){
+  const cleanMessage = cleanStr('The "Content-Type" header must be set for requests with a non-empty payload');
+  const cleanPayloadText = cleanStr(payload?.text);
+  if(payload && payload.text  && !cleanPayloadText.includes(cleanMessage)){
+    throw new Error('The "Content-Type" header must be set for requests with a non-empty payload');
   }
   // if it got to this point it passed the test
 });
