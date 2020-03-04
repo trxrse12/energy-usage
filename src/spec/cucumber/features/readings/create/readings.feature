@@ -36,3 +36,20 @@ Feature: Create readings
         And the header of the response should include "application/json"
         And the payload of the response should be a valid JSON object
         And contains a message property which says 'Payload should be in JSON format'
+
+
+    Scenario Outline: Bad Request Payload
+        If the client send a payload that doesn't follow the standard energy reading format
+
+        When the client creates a POST request to /readings
+        And attaches a Create Reading payload which is missing the <missingFields> field
+        And sends the request
+        Then our API should respond with a 400 HTTP status code
+        And the payload of the response should be a valid JSON object
+        And contains a message property which says "Payload must contain three fields: cumulative, readingDate and unit"
+
+        Examples:
+        | missingFields |
+        | cumulative |
+        | readingDate |
+        | unit |

@@ -16,9 +16,15 @@ interface Error{
 }
 
 interface Payload {
-  status: number;
+  status: number,
   text?: string,
   data?: string,
+}
+
+interface EnergyReadingPayload {
+  cumulative: number,
+  readingDate: string,
+  unit: 'kWh',
 }
 
 let request: superagent.SuperAgentRequest;
@@ -44,6 +50,22 @@ When('attaches a generic non-JSON payload', function(){
 When('attaches a generic malformed payload', function(){
   request.send('{"cumulative": 22300, "readingDate": }');
   request.set('Content-Type', 'application/json');
+});
+
+When(/^attaches an? (.+) payload which is missing the ([a-zA-Z0-9, ]+) fields?$/,
+  function(payloadType, missingFields){
+    const payload = {
+      cumulative: 1000000,
+      readingDate: "3000-00-00T00:00:00.000Z",
+      unit: 'kWh',
+  };
+  const fieldsToDelete = missingFields.split(',')
+    .map((s: string) => s.trim())
+    .filter((s: string) => s !== '');
+  fieldsToDelete.forEach((field: keyof EnergyReadingPayload) => delete payload[field]);
+  request
+    .send(JSON.stringify((payload)))
+    .set('Content-Type', 'application/json');
 });
 
 When('sends the request', function(cb){
