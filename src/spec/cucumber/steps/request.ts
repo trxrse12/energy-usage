@@ -129,6 +129,8 @@ Then(/^contains a message property which says 'The "Content-Type" header must al
   const cleanStr = (s: string|undefined) => s ? s.replace(/[\\|\/|"]/g,'') : '';
   const cleanMessage = cleanStr('The "Content-Type" header must always be "application\/json"');
   const cleanPayloadText = cleanStr(payload?.text);
+  // console.log('CCCCCCCCCCCCCCCCCCCCCCCCCC: cleanMessage=', cleanMessage);
+  // console.log('CCCCCCCCCCCCCCCCCCCCCCCCCC: cleanPayloadText=', cleanPayloadText);
   if(payload && payload.text  && !cleanPayloadText.includes(cleanMessage)){
     throw new Error('The "Content-Type" header must always be "application/json"');
   }

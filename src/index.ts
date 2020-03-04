@@ -3,6 +3,7 @@ import Koa, {ExtendableContext} from 'koa';
 import { initialize } from './data'; // init the db
 import { router } from './middlewares/router'
 import {
+  ContentTypeIsNotJsonException,
   ContentTypeNotSetException,
   EmptyInputException
 } from './validators/errors/custom-errors';
@@ -20,7 +21,6 @@ async function checkEmptyPayload (ctx: ExtendableContext, next: TAnyPromise){
 }
 
 async function checkContentTypeIsSet(ctx: ExtendableContext, next: TAnyPromise){
-  console.log('CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC ctx=', ctx)
   if (
     ctx.req.headers['content-length']
     && ctx.req.headers['content-length'] !== '0'
@@ -33,10 +33,7 @@ async function checkContentTypeIsSet(ctx: ExtendableContext, next: TAnyPromise){
 
 async function checkContentTypeIsJson(ctx: ExtendableContext, next: TAnyPromise){
   if (!ctx.req.headers['content-type']?.includes('application/json')){
-      ctx.response.status = 415;
-    ctx.body = {
-      data: {message: 'The "Content-Type" header must always be "application/jssssson"'},
-    }
+    throw new ContentTypeIsNotJsonException();
   }
   await next();
 }
@@ -73,6 +70,12 @@ export default function createServer() {
         ctx.response.status = 400;
         ctx.body = {
           data: {message: 'The "Content-Type" header must be set for requests with a non-empty payload'},
+        }
+      }
+      if (err instanceof ContentTypeIsNotJsonException){
+        ctx.response.status = 415;
+        ctx.body = {
+          data: {message: 'The "Content-Type" header must always be "application/json"'},
         }
       }
     }

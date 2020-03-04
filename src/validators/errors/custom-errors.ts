@@ -17,3 +17,13 @@ export class ContentTypeNotSetException extends Error {
     }
   }
 }
+
+export class ContentTypeIsNotJsonException extends Error {
+  constructor (...params: (string|undefined)[]) {
+    super(...params);
+    this.name = 'ContentTypeIsNotJsonException';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ContentTypeIsNotJsonException);
+    }
+  }
+}
