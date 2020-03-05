@@ -1,12 +1,16 @@
 import { When, Then } from 'cucumber';
 import superagent from 'superagent';
-import {Request, Response} from 'koa';
-import {ServerResponse} from 'http';
-import assert from 'assert';
+import _ from 'lodash';
+import {Response} from 'koa';
 import {AssertionError} from 'assert';
 import chai from 'chai';
 import {EnergyReadingPayload, Payload, ApiError} from "./types";
-import { getValidPayload } from './utils';
+import {backupEnergyDatabase, getValidPayload, restoreEnergyDatabase} from './utils';
+import energyReadingsDatabase from '../../../../sampleData.json';
+import * as fs from "fs";
+import * as path from "path";
+import {constants} from "fs";
+import {COPYFILE_EXCL} from "constants";
 const expect = chai.expect;
 
 // function that helps testing API return messages that contain quotes and slashes
@@ -141,7 +145,7 @@ Then('the header of the response should include {string}', function(string) {
 Then(/^the payload of the response should be a valid ([a-zA-Z0-9, ]+)$/, function(payloadType){
   response = result || error;
   // console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY header=', header)
-  if ('content-type' in header){
+  if (header && 'content-type' in header){
     contentType = header["content-type"]!;
   };
   // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ contentType=', contentType)
@@ -197,7 +201,7 @@ Then(/^contains a message property which says 'The "Content-Type" header must be
 });
 
 Then(/^contains a message property which says 'Data saved OK'$/, function(){
-  console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP payload=', payload)
+  // console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP payload=', payload)
   expect(payload?.data).to.haveOwnProperty('message');
   expect(payload?.data?.message).to.include('Data saved OK');
 });
@@ -215,4 +219,37 @@ Then(/^contains a message property which says 'Payload must contain three fields
     throw new Error('Payload must contain three fields: "cumulative", "readingDate" and "unit" fields');
   }
   // if it got to this point it passed the test
+});
+
+Then(/^the payload object should be added to the database$/, function(){
+  // backup the database to be able to restore it after testing modification
+  if (!backupEnergyDatabase('sampleData.json')) {
+    throw new Error('Could not backup the database before testing modifications');
+  }
+
+  // search for the energy reading created in the getValidPayload()
+  if (energyReadingsDatabase.electricity){
+    // find the saved object in the database
+    const foundObject = _.find(energyReadingsDatabase.electricity, getValidPayload());
+    // console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO, foundObject=', foundObject)
+
+    // erase the database
+    // const appDirectory = path.resolve('.');
+    // try {
+    //   fs.unlink(path.join(appDirectory, 'sampleData.json'), (err) => {
+    //     throw err
+    //   });
+    //   console.log('database deleted')
+    // } catch (e) {
+    //   console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF')
+    // }
+
+
+    // restore  the file to the previous state
+    if (!restoreEnergyDatabase('sampleData.json')){
+      throw new Error('Database in uncertain state, could not be restored')
+    }
+  } else {
+    throw new Error("The energy database file corrupted")
+  }
 });

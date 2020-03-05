@@ -14,3 +14,7 @@ export interface EnergyReadingPayload {
   readingDate: string,
   unit: 'kWh',
 }
+
+export interface EnergyDatabase {
+  electricity: EnergyReadingPayload[];
+}
