@@ -6,7 +6,7 @@ export interface ApiError{
 export interface Payload {
   status: number,
   text?: string,
-  data?: string,
+  data?: {[key:string]:string}
 }
 
 export interface EnergyReadingPayload {

@@ -62,5 +62,6 @@ Feature: Create readings
         And attaches a valid payload
         And sends the request
         Then our API should respond with a 201 HTTP status code
-        And the payload of the response should be a valid string
+        And the payload of the response should be a valid JSON object
+        And contains a message property which says 'Data saved OK'
         And the payload object should be added to the database

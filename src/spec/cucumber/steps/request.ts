@@ -12,11 +12,17 @@ const expect = chai.expect;
 // function that helps testing API return messages that contain quotes and slashes
 const cleanStr = (s: string|undefined) => s ? s.replace(/[\\|\/|"]/g,'') : '';
 
+type Header = {
+  'content-type'?: string;
+  'content-length'?: string
+}
+
 let request: superagent.SuperAgentRequest;
 let requestPayload: unknown;
 let response: Response;
 let result: Response;
-let header: string;
+let header: Header;
+let contentType: string;
 let payload: Payload;
 let error: ApiError;
 let errorMessage: string;
@@ -68,7 +74,7 @@ When('sends the request', function(cb){
   // @ts-ignore
   request
     .then((response) => {
-      // console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
+      //console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
       result = response?.body;
       header = response?.header;
       cb();
@@ -77,7 +83,7 @@ When('sends the request', function(cb){
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
       error = errResponse.response as unknown as ApiError;
       errorMessage = errResponse.message;
-      // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
+      //console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
       cb();
     })
 });
@@ -115,8 +121,6 @@ Then('our API should respond with a 201 HTTP status code', function () {
       actual: response?.status
     });
   }
-  console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorMessage=', errorMessage)
-  throw new Error('The API came back with an error instead of code 201')
 });
 
 Then('the header of the response should include {string}', function(string) {
@@ -136,9 +140,11 @@ Then('the header of the response should include {string}', function(string) {
 
 Then(/^the payload of the response should be a valid ([a-zA-Z0-9, ]+)$/, function(payloadType){
   response = result || error;
-  //console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY response=', response)
-  const contentType = response?.headers['Content-Type'] || response?.headers['content-type'];
-
+  // console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY header=', header)
+  if ('content-type' in header){
+    contentType = header["content-type"]!;
+  };
+  // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ contentType=', contentType)
   if (payloadType === 'JSON object'){
     // check Content-Type header
     if (!contentType || !contentType?.includes('application/json')){
@@ -188,6 +194,12 @@ Then(/^contains a message property which says 'The "Content-Type" header must be
     throw new Error('The "Content-Type" header must be set for requests with a non-empty payload');
   }
   // if it got to this point it passed the test
+});
+
+Then(/^contains a message property which says 'Data saved OK'$/, function(){
+  console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP payload=', payload)
+  expect(payload?.data).to.haveOwnProperty('message');
+  expect(payload?.data?.message).to.include('Data saved OK');
 });
 
 Then(/^contains a message property which says 'Payload should be in JSON format'$/, function(){

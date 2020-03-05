@@ -41,4 +41,8 @@ export const createReading = async (ctx: ExtendableContext, next: () => Promise<
     throw e;
   }
   ctx.response.status = 201;
+  ctx.body = {
+    data: {message: 'Data saved OK'},
+  };
+  ctx.set('content-type', 'application/json')
 };

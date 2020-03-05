@@ -46,8 +46,8 @@ export default function createServer() {
     try {
       await next();
     } catch (err){
-      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
-      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.message=', err.message);
+      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
+      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.message=', err.message);
       // unknown error by default
       ctx.response.status = 500;
       ctx.body = {
