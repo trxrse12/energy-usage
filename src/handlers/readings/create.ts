@@ -17,7 +17,8 @@ function isValidEnergyReadingPayload(energyReading: EnergyReadingPayload): energ
   const unitKwh = energyReading?.unit;
   if (
     cumulative && typeof cumulative === 'number' && cumulative > 0
-    && readingDate && moment(readingDate).isValid()
+    && readingDate
+    && moment(readingDate).isValid()
     && energyReading?.unit === 'kWh'
   ) {
     return true;
@@ -27,7 +28,7 @@ function isValidEnergyReadingPayload(energyReading: EnergyReadingPayload): energ
 
 export const createReading = async (ctx: ExtendableContext, next: () => Promise<any>) => {
   try {
-    // console.log("Context Body:", JSON.stringify(ctx.body));
+    console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD Context Body:", ctx.request.body);
 
     // checking the shape of the request payload to conform to the EnergyReadingPayload format
     if (!isValidEnergyReadingPayload(ctx?.request?.body)){
@@ -39,5 +40,5 @@ export const createReading = async (ctx: ExtendableContext, next: () => Promise<
     }
     throw e;
   }
-  await next();
+  ctx.response.status = 201;
 };

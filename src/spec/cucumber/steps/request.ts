@@ -13,11 +13,13 @@ const expect = chai.expect;
 const cleanStr = (s: string|undefined) => s ? s.replace(/[\\|\/|"]/g,'') : '';
 
 let request: superagent.SuperAgentRequest;
+let requestPayload: unknown;
 let response: Response;
 let result: Response;
 let header: string;
 let payload: Payload;
 let error: ApiError;
+let errorMessage: string;
 
 When('the client creates a POST request to /readings', function(){
   request = superagent('POST', 'http://localhost:3000/readings');
@@ -54,10 +56,11 @@ When(/^attaches an? (.+) payload which is missing the ([a-zA-Z0-9, ]+) fields?$/
     .set('Content-Type', 'application/json');
 });
 
-When(/^attaches a valid (.*)payload$/, function(payloadType){
-  this.requestPayload = getValidPayload(payloadType);
+When(/^attaches a valid payload$/, function(){
+  requestPayload = getValidPayload();
+  // console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ requestPayload=', JSON.stringify(requestPayload))
   request
-    .send(JSON.stringify(this.requestPayload))
+    .send(JSON.stringify(requestPayload))
     .set('Content-Type', 'application/json');
 });
 
@@ -70,9 +73,10 @@ When('sends the request', function(cb){
       header = response?.header;
       cb();
     })
-    .catch((errResponse: { response: Error; }) =>{
+    .catch((errResponse) =>{
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
       error = errResponse.response as unknown as ApiError;
+      errorMessage = errResponse.message;
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
       cb();
     })
@@ -102,6 +106,17 @@ Then('our API should respond with a 415 HTTP status code', function () {
       });
     }
   };
+});
+
+Then('our API should respond with a 201 HTTP status code', function () {
+  if (!error && response && response.status && response.status !==201) {
+    throw new AssertionError({
+      expected: 201,
+      actual: response?.status
+    });
+  }
+  console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorMessage=', errorMessage)
+  throw new Error('The API came back with an error instead of code 201')
 });
 
 Then('the header of the response should include {string}', function(string) {

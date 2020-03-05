@@ -1,5 +1,5 @@
 import Koa, {ExtendableContext} from 'koa';
-
+import logger from 'koa-logger';
 import { initialize } from './data'; // init the db
 import { router } from './middlewares/router'
 import {
@@ -40,13 +40,14 @@ async function checkContentTypeIsJson(ctx: ExtendableContext, next: TAnyPromise)
 
 export default function createServer() {
   const server = new Koa();
+  server.use(logger());
   // now define the error middleware, to catch all the untreated errors in the subsequent middleware
   server.use(async (ctx, next) => {
     try {
       await next();
     } catch (err){
-      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
-      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.message=', err.message);
+      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
+      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.message=', err.message);
       // unknown error by default
       ctx.response.status = 500;
       ctx.body = {

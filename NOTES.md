@@ -81,9 +81,12 @@ Notes:
 Obs. Here are some practical observations:
     1. it is a good idea to open two terminals in your IDE and to keep the server dev terminal on on the left and the tests dev terminal on the right ==> that will help in dev speed, as you can indep  modify the app or the BDD test code;
     2. it is a good idea in the BDD code to have a console.print pair of instructions embedded in the "When(sends)" test, as it will help the dev process (it will make easier to see the server response)
-    3. 
+    3. good idea to use the koa-logger
+    4. good idea to console (if needed) the POST request payload from superagent
+    5. 
     
     
 Lessons learned on Koa:
     1. middlewares have to be async functions that end in "await next()";
-    2. 
+    2. error handler middleware is the first middleware, not the last (due to generators)
+    3. you can console the incoming request with ctx.request.body, NOT with ctx.body
