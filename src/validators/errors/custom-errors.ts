@@ -47,3 +47,13 @@ export class UnknownInternalErrorException extends Error {
     }
   }
 }
+
+export class DatabaseSavingOperationFailureException extends Error {
+  constructor (...params: (string|undefined)[]) {
+    super(...params);
+    this.name = 'DatabaseSavingOperationFailureException';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, DatabaseSavingOperationFailureException);
+    }
+  }
+}

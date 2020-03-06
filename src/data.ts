@@ -1,9 +1,13 @@
 import * as sqlite3 from 'sqlite3';
 import sampleData from '../sampleData.json';
+import {EnergyReadingPayload} from "./utils/types";
+import util from "util";
 
 const SQLite = sqlite3.verbose();
 
+// @ts-ignore
 export const connection = new SQLite.Database(':memory:');
+const promisifiedRun = util.promisify(connection.run.bind(connection));
 
 /**
  * Imports the data from the sampleData.json file into a `meter_reads` table.
@@ -15,9 +19,9 @@ export const connection = new SQLite.Database(':memory:');
  * Note, it is an in-memory database, so the data will be reset when the
  * server restarts.
  */
-export function initialize() {
-  connection.serialize(() => {
-    connection.run(
+export const initialize = () => {
+  connection.serialize(async () => {
+    await promisifiedRun(
       'CREATE TABLE meter_reads (cumulative INTEGER, reading_date TEXT, unit TEXT)'
     );
 
@@ -29,4 +33,4 @@ export function initialize() {
       );
     });
   });
-}
+};

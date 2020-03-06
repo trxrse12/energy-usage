@@ -1,9 +1,12 @@
 import {ExtendableContext, Response} from 'koa';
 import moment from 'moment';
 import {
+  DatabaseSavingOperationFailureException,
   InvalidRequestPayloadException,
   UnknownInternalErrorException,
 } from "../../validators/errors/custom-errors";
+import {saveReadingToDatabase} from "../../utils";
+import {connection} from "../../data";
 
 interface EnergyReadingPayload {
   cumulative: number,
@@ -11,7 +14,7 @@ interface EnergyReadingPayload {
   unit: 'kWh',
 }
 // custom type guard for the EnergyReadingPayloads
-function isValidEnergyReadingPayload(energyReading: EnergyReadingPayload): energyReading is EnergyReadingPayload {
+export const isValidEnergyReadingPayload = function (energyReading: EnergyReadingPayload): energyReading is EnergyReadingPayload {
   const cumulative = energyReading?.cumulative;
   const readingDate = energyReading?.readingDate;
   const unitKwh = energyReading?.unit;
@@ -27,11 +30,11 @@ function isValidEnergyReadingPayload(energyReading: EnergyReadingPayload): energ
 }
 
 export const createReading = async (ctx: ExtendableContext, next: () => Promise<any>) => {
+  const readingPayload = ctx?.request?.body;
   try {
-    console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD Context Body:", ctx.request.body);
-
+    // console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD Context Body:", ctx.request.body);
     // checking the shape of the request payload to conform to the EnergyReadingPayload format
-    if (!isValidEnergyReadingPayload(ctx?.request?.body)){
+    if (!isValidEnergyReadingPayload(readingPayload)){
       throw new InvalidRequestPayloadException(); // custom validation error
     }
   } catch (e) {
@@ -40,9 +43,22 @@ export const createReading = async (ctx: ExtendableContext, next: () => Promise<
     }
     throw e;
   }
-  ctx.response.status = 201;
-  ctx.body = {
-    data: {message: 'Data saved OK'},
-  };
-  ctx.set('content-type', 'application/json')
+  try{
+    const saveOperationResult = saveReadingToDatabase(readingPayload);
+    console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOO saveOperationResult=', saveOperationResult)
+    if (saveOperationResult){
+      // recover the reading to be sure the write operation was ok
+      ctx.response.status = 201;
+      ctx.body = {
+        data: {message: 'Data saved OK'},
+      };
+      ctx.set('content-type', 'application/json')
+    } else {
+      throw new DatabaseSavingOperationFailureException(); // not tested in this project
+    }
+  } catch (e) {
+    throw (e);
+  }
+
+
 };

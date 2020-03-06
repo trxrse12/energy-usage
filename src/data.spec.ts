@@ -9,7 +9,7 @@ describe('data', () => {
     data.connection.serialize(() => {
       data.connection.all(
         'SELECT * FROM meter_reads ORDER BY cumulative',
-        (error, selectResult) => {
+        (error: any, selectResult: any[]) => {
           expect(error).to.be.null;
           expect(selectResult).to.have.length(sampleData.electricity.length);
           selectResult.forEach((row, index) => {

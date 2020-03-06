@@ -4,13 +4,19 @@ import _ from 'lodash';
 import {Response} from 'koa';
 import {AssertionError} from 'assert';
 import chai from 'chai';
-import {EnergyReadingPayload, Payload, ApiError} from "./types";
-import {backupEnergyDatabase, getValidPayload, restoreEnergyDatabase} from './utils';
-import energyReadingsDatabase from '../../../../sampleData.json';
-import * as fs from "fs";
-import * as path from "path";
-import {constants} from "fs";
-import {COPYFILE_EXCL} from "constants";
+import {Payload, ApiError} from "./types";
+import {EnergyReadingPayload} from '../../../utils/types';
+import {getValidPayload} from './utils';
+import * as data from '../../../data';
+import util from 'util';
+
+// tried tho open a shared cached connection in sqlite3,
+// not supported unless recompiled with special flags
+// @ts-ignore
+// export const connection = new SQLite.cached.Database('file::memory?cache=shared');
+// const promisifiedRun = util.promisify(connection.run.bind(connection));
+// const promisifiedAll = util.promisify(connection.all.bind(connection));
+
 const expect = chai.expect;
 
 // function that helps testing API return messages that contain quotes and slashes
@@ -22,7 +28,7 @@ type Header = {
 }
 
 let request: superagent.SuperAgentRequest;
-let requestPayload: unknown;
+let requestPayload: EnergyReadingPayload;
 let response: Response;
 let result: Response;
 let header: Header;
@@ -67,7 +73,7 @@ When(/^attaches an? (.+) payload which is missing the ([a-zA-Z0-9, ]+) fields?$/
 });
 
 When(/^attaches a valid payload$/, function(){
-  requestPayload = getValidPayload();
+  requestPayload = getValidPayload()!;
   // console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ requestPayload=', JSON.stringify(requestPayload))
   request
     .send(JSON.stringify(requestPayload))
@@ -87,7 +93,7 @@ When('sends the request', function(cb){
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
       error = errResponse.response as unknown as ApiError;
       errorMessage = errResponse.message;
-      //console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
+      console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
       cb();
     })
 });
@@ -144,11 +150,11 @@ Then('the header of the response should include {string}', function(string) {
 
 Then(/^the payload of the response should be a valid ([a-zA-Z0-9, ]+)$/, function(payloadType){
   response = result || error;
-  // console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY header=', header)
+  console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY header=', header)
   if (header && 'content-type' in header){
     contentType = header["content-type"]!;
   };
-  // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ contentType=', contentType)
+  console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ contentType=', contentType)
   if (payloadType === 'JSON object'){
     // check Content-Type header
     if (!contentType || !contentType?.includes('application/json')){
@@ -221,35 +227,26 @@ Then(/^contains a message property which says 'Payload must contain three fields
   // if it got to this point it passed the test
 });
 
-Then(/^the payload object should be added to the database$/, function(){
-  // backup the database to be able to restore it after testing modification
-  if (!backupEnergyDatabase('sampleData.json')) {
-    throw new Error('Could not backup the database before testing modifications');
-  }
+// NOT OPERATIONAL DUE TO SQLITE3 limitations (no way to open a shared cache db yet)
+Then(/^the payload object should be added to the database$/, function(done) {
+  // check to see the payload (electricity reading) is saved
+  data.initialize();
 
-  // search for the energy reading created in the getValidPayload()
-  if (energyReadingsDatabase.electricity){
-    // find the saved object in the database
-    const foundObject = _.find(energyReadingsDatabase.electricity, getValidPayload());
-    // console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO, foundObject=', foundObject)
-
-    // erase the database
-    // const appDirectory = path.resolve('.');
-    // try {
-    //   fs.unlink(path.join(appDirectory, 'sampleData.json'), (err) => {
-    //     throw err
-    //   });
-    //   console.log('database deleted')
-    // } catch (e) {
-    //   console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF')
-    // }
-
-
-    // restore  the file to the previous state
-    if (!restoreEnergyDatabase('sampleData.json')){
-      throw new Error('Database in uncertain state, could not be restored')
-    }
-  } else {
-    throw new Error("The energy database file corrupted")
-  }
+  data.connection.serialize(() => {
+    data.connection.all(
+      `SELECT * FROM meter_reads`,
+      //  WHERE (
+      // cumulative = '${requestPayload?.cumulative}'
+      // AND reading_date = '${requestPayload?.readingDate}'
+      // AND unit = '${requestPayload?.unit}');`,
+      (error: any, selectResult: any[]) => {
+        selectResult.forEach((row, index) => {
+          console.log('>>>>>>>>>>>>>>', row)
+        })
+        // expect(error).to.be.null;
+        // expect(selectResult).to.have.length(1);
+        done();
+      }
+    )
+  });
 });

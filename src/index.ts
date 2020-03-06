@@ -4,9 +4,10 @@ import { initialize } from './data'; // init the db
 import { router } from './middlewares/router'
 import {
   ContentTypeIsNotJsonException,
-  ContentTypeNotSetException,
+  ContentTypeNotSetException, DatabaseSavingOperationFailureException,
   EmptyInputException, InvalidRequestPayloadException
 } from './validators/errors/custom-errors';
+import {EnergyReadingPayload} from "./utils/types";
 
 const PORT = process.env.PORT || 3000;
 
@@ -46,8 +47,8 @@ export default function createServer() {
     try {
       await next();
     } catch (err){
-      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
-      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.message=', err.message);
+      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.name=', err.name);
+      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB err.message=', err.message);
       // unknown error by default
       ctx.response.status = 500;
       ctx.body = {
@@ -94,6 +95,14 @@ export default function createServer() {
           data: {message: 'Payload must contain three fields: "cumulative", "readingDate" and "unit" fields'},
         }
       }
+
+      // Readings could not be saved to the database
+      if (err instanceof DatabaseSavingOperationFailureException){
+        ctx.response.status = 403;
+        ctx.body = {
+          data: {message: 'Electricity reading could not be saved'},
+        }
+      }
     }
   });
   server.use(checkEmptyPayload);
@@ -105,7 +114,7 @@ export default function createServer() {
 }
 
 if (!module.parent) {
-  initialize();
+  const database = initialize();
   const server = createServer();
   server.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
