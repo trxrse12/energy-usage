@@ -2,12 +2,6 @@ import Koa, {ExtendableContext} from 'koa';
 import logger from 'koa-logger';
 import { initialize } from './data'; // init the db
 import { router } from './middlewares/router'
-import {
-  ContentTypeIsNotJsonException,
-  ContentTypeNotSetException, DatabaseSavingOperationFailureException,
-  EmptyInputException, InvalidRequestPayloadException
-} from './validators/errors/custom-errors';
-import {TAnyPromise} from './utils/types';
 import {checkContentTypeIsJson} from './middlewares/check-content-type-is-json';
 import {checkContentTypeIsSet} from './middlewares/check-content-type-is-set';
 import {checkEmptyPayload} from './middlewares/check-empty-payload';

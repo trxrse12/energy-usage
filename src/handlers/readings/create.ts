@@ -7,6 +7,7 @@ import {
 } from "../../validators/errors/custom-errors";
 import {saveReadingToDatabase} from "../../utils";
 import {connection} from "../../data";
+import {TAnyPromise} from "../../utils/types";
 
 interface EnergyReadingPayload {
   cumulative: number,
@@ -29,10 +30,9 @@ export const isValidEnergyReadingPayload = function (energyReading: EnergyReadin
   return false;
 }
 
-export const createReading = async (ctx: ExtendableContext, next: () => Promise<any>) => {
+export const createReading = async (ctx: ExtendableContext, next: TAnyPromise) => {
   const readingPayload = ctx?.request?.body;
   try {
-    // console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD Context Body:", ctx.request.body);
     // checking the shape of the request payload to conform to the EnergyReadingPayload format
     if (!isValidEnergyReadingPayload(readingPayload)){
       throw new InvalidRequestPayloadException(); // custom validation error
@@ -45,7 +45,6 @@ export const createReading = async (ctx: ExtendableContext, next: () => Promise<
   }
   try{
     const saveOperationResult = saveReadingToDatabase(readingPayload);
-    console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOO saveOperationResult=', saveOperationResult)
     if (saveOperationResult){
       // recover the reading to be sure the write operation was ok
       ctx.response.status = 201;
