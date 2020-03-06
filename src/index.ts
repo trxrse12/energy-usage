@@ -20,9 +20,8 @@ export default function createServer() {
   server.use(logger());
 
   // now define the error middleware, to catch all the untreated errors in the subsequent middleware
-  server.use(async (ctx, next) => {
-    await errorHandler(ctx, next);
-  });
+  server.use((ctx, next) => errorHandler(ctx, next));
+  // define the common checks in separate middleware functions
   server.use(checkEmptyPayload);
   server.use(checkContentTypeIsSet);
   server.use(checkContentTypeIsJson);
