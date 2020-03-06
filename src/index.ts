@@ -7,37 +7,12 @@ import {
   ContentTypeNotSetException, DatabaseSavingOperationFailureException,
   EmptyInputException, InvalidRequestPayloadException
 } from './validators/errors/custom-errors';
-import {EnergyReadingPayload} from "./utils/types";
+import {TAnyPromise} from './utils/types';
+import {checkContentTypeIsJson} from './middlewares/check-content-type-is-json';
+import {checkContentTypeIsSet} from './middlewares/check-content-type-is-set';
+import {checkEmptyPayload} from './middlewares/check-empty-payload';
 
 const PORT = process.env.PORT || 3000;
-
-type TAnyPromise = () => Promise<any>;
-
-async function checkEmptyPayload (ctx: ExtendableContext, next: TAnyPromise){
-  if (['POST', 'PATCH', 'PUT'].includes(ctx.req.method!)
-  &&  ctx.req.headers['content-length'] === '0'){
-    throw new EmptyInputException();
-  }
-  await next();
-}
-
-async function checkContentTypeIsSet(ctx: ExtendableContext, next: TAnyPromise){
-  if (
-    ctx.req.headers['content-length']
-    && ctx.req.headers['content-length'] !== '0'
-    && !ctx.req?.headers['content-type']
-  ) {
-    throw new ContentTypeNotSetException();
-  }
-  await next();
-}
-
-async function checkContentTypeIsJson(ctx: ExtendableContext, next: TAnyPromise){
-  if (!ctx.req.headers['content-type']?.includes('application/json')){
-    throw new ContentTypeIsNotJsonException();
-  }
-  await next();
-}
 
 export default function createServer() {
   const server = new Koa();
