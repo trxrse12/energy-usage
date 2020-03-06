@@ -93,7 +93,7 @@ When('sends the request', function(cb){
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
       error = errResponse.response as unknown as ApiError;
       errorMessage = errResponse.message;
-      console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
+      // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
       cb();
     })
 });
@@ -149,16 +149,21 @@ Then('the header of the response should include {string}', function(string) {
 });
 
 Then(/^the payload of the response should be a valid ([a-zA-Z0-9, ]+)$/, function(payloadType){
+  let errorText: string;
   response = result || error;
-  console.log('YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY header=', header)
   if (header && 'content-type' in header){
     contentType = header["content-type"]!;
   };
-  console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ contentType=', contentType)
   if (payloadType === 'JSON object'){
-    // check Content-Type header
-    if (!contentType || !contentType?.includes('application/json')){
-      throw new Error('Response NOT of Content-Type application/json');
+    let parsedResponseBody: string;
+    try {
+      parsedResponseBody = JSON.parse(JSON.stringify(response.body));
+    } catch (e){
+      // has no response body
+      // check Content-Type header
+      if (!contentType || !contentType?.includes('application/json')){
+        throw new Error('Response NOT of Content-Type application/json');
+      }
     }
     // Check if is valid JSON
     try {
