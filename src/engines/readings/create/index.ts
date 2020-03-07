@@ -1,5 +1,5 @@
 import {EnergyReadingPayload, EngineType} from "../../../utils/types";
-import {isValidEnergyReadingPayload} from "../../../validators/readings";
+import {isValidEnergyReadingPayload} from "../../../validators/readings/create";
 import {promisifiedRun, promisifiedAll} from "../../../utils";
 
 

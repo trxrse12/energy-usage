@@ -8,7 +8,7 @@ import { createReadingHandler } from '../handlers/readings/create'
 import { createReadingEngine } from '../engines/readings/create';
 import {HandlerType, EngineType, HandlerToEngineMap, HandlerToValidatorMap} from "../utils/types";
 import {create} from "domain";
-import {isValidEnergyReadingPayload} from "../validators/readings";
+import {isValidEnergyReadingPayload} from "../validators/readings/create";
 // define the mappers need to inject Engines into the Handlers
 const handlerToEngineMap: HandlerToEngineMap = new Map();
 handlerToEngineMap.set(createReadingHandler, createReadingEngine);

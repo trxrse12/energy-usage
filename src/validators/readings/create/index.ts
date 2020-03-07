@@ -1,6 +1,6 @@
 // custom type guard for the EnergyReadingPayloads
 import moment from "moment";
-import {EnergyReadingPayload, ValidatorType} from "../../utils/types";
+import {EnergyReadingPayload, ValidatorType} from "../../../utils/types";
 
 export const isValidEnergyReadingPayload: ValidatorType =
   function (energyReading: EnergyReadingPayload): energyReading is EnergyReadingPayload {

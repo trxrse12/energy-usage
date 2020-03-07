@@ -6,7 +6,7 @@ import {
   UnknownInternalErrorException,
 } from "../../validators/errors/custom-errors";
 import {createReadingEngine} from "../../engines/readings/create";
-import {isValidEnergyReadingPayload} from "../../validators/readings";
+import {isValidEnergyReadingPayload} from "../../validators/readings/create";
 import {DbType, EnergyReadingPayload, HandlerType, TAnyPromise} from "../../utils/types";
 
 // the actual reading insertion handler
