@@ -84,7 +84,7 @@ When('sends the request', function(cb){
   // @ts-ignore
   request
     .then((response) => {
-      //console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
+      // console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
       result = response?.body;
       header = response?.header;
       cb();
@@ -93,7 +93,7 @@ When('sends the request', function(cb){
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
       error = errResponse.response as unknown as ApiError;
       errorMessage = errResponse.message;
-      // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE error=', error);
+      // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorMessage=', errorMessage);
       cb();
     })
 });
