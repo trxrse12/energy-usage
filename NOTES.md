@@ -77,7 +77,13 @@ Notes:
     f. Added a cucumber scenario on input validations  
     g. Testing the energy reading upload success scenario  
     
+6 To ensure FUTURE SCALABILITY, split the route processor into three components: 
+    a. the route handler, having a single role of returning the response of the reading insertion result to the user;
+    b. the engine, having a single role to actually insert the reading;
+    c. the validator, having the single role of checking that the posted structure is a valid electricity reading;
     
+7. Once the new scalable architecture is in place (see point 6.), add unit tests to test the validator, the engine and the rute handler. Also add unit tests for the middleware.    
+         
     
 Obs. Here are some practical observations:
     1. it is a good idea to open two terminals in your IDE and to keep the server dev terminal on on the left and the tests dev terminal on the right ==> that will help in dev speed, as you can indep  modify the app or the BDD test code;

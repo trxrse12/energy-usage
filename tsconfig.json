@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // target the latest version of JS
-    "target": "esnext",
+    "target": "es2018", // not esnext, because with esnext the ts-node dqoe not work with optional chaining
     // Search under node_modules for non-relative imports
     "moduleResolution": "node",
     // Allow the import of JSON modules
