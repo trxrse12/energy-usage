@@ -1,6 +1,6 @@
 import {ExtendableContext} from "koa";
-import {TAnyPromise} from "../utils/types";
-import {ContentTypeNotSetException} from "../validators/errors/custom-errors";
+import {TAnyPromise} from "../../utils/types";
+import {ContentTypeNotSetException} from "../../validators/errors/custom-errors";
 
 export const checkContentTypeIsSet = async function (ctx: ExtendableContext, next: TAnyPromise){
   if (

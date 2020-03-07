@@ -1,6 +1,6 @@
 import {ExtendableContext} from "koa";
-import {TAnyPromise} from "../utils/types";
-import {EmptyInputException} from "../validators/errors/custom-errors";
+import {TAnyPromise} from "../../utils/types";
+import {EmptyInputException} from "../../validators/errors/custom-errors";
 
 export const checkEmptyPayload =  async function  (ctx: ExtendableContext, next: TAnyPromise){
   if (['POST', 'PATCH', 'PUT'].includes(ctx.req.method!)
