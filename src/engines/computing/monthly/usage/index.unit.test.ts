@@ -19,10 +19,10 @@ let validSetOfReadings = [
     readingDate: '2017-04-15T00:00:00.000Z',
     unit: 'kWh' },
   { cumulative: 18682,
-    reading_date: '2017-09-10T00:00:00.000Z',
+    readingDate: '2017-09-10T00:00:00.000Z',
     unit: 'kWh' },
   { cumulative: 18453,
-    reading_date: '2017-07-31T00:00:00.000Z',
+    readingDate: '2017-07-31T00:00:00.000Z',
     unit: 'kWh' },
   { cumulative: 18620,
     readingDate: '2017-08-31T00:00:00.000Z',
@@ -82,11 +82,12 @@ describe('function sortReadings', () => {
       })
     });
   });
-  describe('when called with a valid set of readings', () => {
+  describe('when called with a valid set of readings, vvv', () => {
     beforeEach(() => {
       sortedReadings = sortReadings(validSetOfReadings);
     });
     it('should return a time sorted set of readings', () => {
+      expect(sortedReadings.length).to.be.greaterThan(0);
       sortedReadings.forEach((sortedReading) =>  {
         console.log('><><><><>', sortedReading)
         console.log('>>>>>>>>',moment(sortedReading.readingDate).isValid())

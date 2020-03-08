@@ -7,12 +7,11 @@ export const isValidEnergyReadingPayload: ValidatorType =
   const cumulative = energyReading?.cumulative;
   const readingDate = energyReading?.readingDate;
   const unitKwh = energyReading?.unit;
-  if (
-    cumulative && typeof cumulative === 'number' && cumulative > 0
+  const testConditions = cumulative && (typeof cumulative === 'number') && (cumulative > 0)
     && readingDate
     && moment(readingDate).isValid()
-    && energyReading?.unit === 'kWh'
-  ) {
+    && (energyReading?.unit === 'kWh');
+  if (testConditions) {
     return true;
   }
   return false;

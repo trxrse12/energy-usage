@@ -12,7 +12,7 @@
     "test:e2e": "yarn run build && npx cucumber-js dist/spec/cucumber/features --require-module @babel/register --require dist/spec/cucumber/steps",
     "test:e2e:one": "yarn run build && npx cucumber-js dist/spec/cucumber/features/readings/retrieve/readingsAll.feature --require-module @babel/register --require dist/spec/cucumber/steps",
     "test:unit": "yarn run build && mocha --exit -r ts-node/register --watch-extensions ts src/**/*.unit.test.ts",
-    "test:unit:one": "mocha --exit --colors -r ts-node/register  --watch-extensions ts --watch -r tsconfig-paths/register src/**/*.unit.test.ts -g",
+    "test:unit:one": "mocha --exit --colors -r ts-node/register --watch-extensions ts --watch src/engines/computing/monthly/usage/**/*.unit.test.ts",
     "watch": "nodemon --signal SIGHUP -L -w ./src --exec yarn run serve",
     "dev": "tsc-watch --onSuccess \"yarn serve\"",
     "explo": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec ts-node src/engines/cpm/retrieve/index.ts",
