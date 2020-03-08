@@ -88,13 +88,13 @@ When('sends the request', function(cb){
   // @ts-ignore
   request
     .then((response) => {
-      // console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
+      console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
       result = response?.body;
       header = response?.header;
       cb();
     })
     .catch((errResponse) =>{
-      // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
+      console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
       error = errResponse.response as unknown as ApiError;
       errorMessage = errResponse.message;
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorMessage=', errorMessage);
@@ -104,17 +104,6 @@ When('sends the request', function(cb){
 
 When(/^without a (?:"|')([\w-]+)(?:"|') header set$/, function(headerName) {
   request.unset(headerName);
-});
-
-Then('our API should respond with a 200 HTTP status code', function () {
-  {
-    if (error && error.statusCode && error.statusCode !==200) {
-      throw new AssertionError({
-        expected: 200,
-        actual: error.statusCode
-      });
-    }
-  };
 });
 
 Then('our API should respond with a 400 HTTP status code', function () {
@@ -133,6 +122,17 @@ Then('our API should respond with a 415 HTTP status code', function () {
     if (error && error.statusCode && error.statusCode !==415) {
       throw new AssertionError({
         expected: 415,
+        actual: response?.status
+      });
+    }
+  };
+});
+
+Then('our API should respond with a 200 HTTP status code', function () {
+  {
+    if (!error && response && response.status && response.status !==200) {
+      throw new AssertionError({
+        expected: 200,
         actual: response?.status
       });
     }

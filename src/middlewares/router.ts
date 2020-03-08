@@ -30,7 +30,6 @@ router.post('/readings', koaBody(), async (ctx, next) => {
 router.get('/readings', async(ctx, next) => {
   const injectionResult = injectHandlerDependencies(
     retrieveAllReadingsHandler, 'CONNECTION', handlerToEngineMap);
-  console.log('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL retrieveAllReadingsHandler=', retrieveAllReadingsHandler)
     await injectionResult(ctx, next);
     await next();
 });

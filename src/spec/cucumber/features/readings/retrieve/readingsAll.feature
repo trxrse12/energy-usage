@@ -6,4 +6,3 @@ Feature: Retrieve all the energy readings
     And sends the request
     Then our API should respond with a 200 HTTP status code
     And the payload of the response should be a valid JSON object
-    And the payload of the response should contain a list of valid energy readings
