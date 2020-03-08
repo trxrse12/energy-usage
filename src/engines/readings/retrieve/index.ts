@@ -3,7 +3,7 @@ import {EngineType} from "../../../utils/types";
 import {ExtendableContext} from "koa";
 import {promisifiedAll} from "../../../utils";
 
-export const retrieveAllReadings: EngineType = async () => {
+export const retrieveAllReadingsEngine: EngineType = async () => {
   const retrieveAllSql: string =
     `SELECT * FROM meter_reads;`
   const showTableSql = `SELECT * FROM dbname.sqlite_master WHERE type='table';`;

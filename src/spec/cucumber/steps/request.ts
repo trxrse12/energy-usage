@@ -41,6 +41,10 @@ When('the client creates a POST request to /readings', function(){
   request = superagent('POST', 'http://localhost:3000/readings');
 });
 
+When('the client creates a GET request to /readings', function(){
+  request = superagent('GET', 'http://localhost:3000/readings');
+});
+
 When('attaches a generic empty payload', function(){
   return undefined;
 });
@@ -100,6 +104,17 @@ When('sends the request', function(cb){
 
 When(/^without a (?:"|')([\w-]+)(?:"|') header set$/, function(headerName) {
   request.unset(headerName);
+});
+
+Then('our API should respond with a 200 HTTP status code', function () {
+  {
+    if (error && error.statusCode && error.statusCode !==200) {
+      throw new AssertionError({
+        expected: 200,
+        actual: error.statusCode
+      });
+    }
+  };
 });
 
 Then('our API should respond with a 400 HTTP status code', function () {
@@ -246,7 +261,7 @@ Then(/^the payload object should be added to the database$/, function(done) {
       // AND unit = '${requestPayload?.unit}');`,
       (error: any, selectResult: any[]) => {
         selectResult.forEach((row, index) => {
-          console.log('>>>>>>>>>>>>>>', row)
+          // console.log('>>>>>>>>>>>>>>', row)
         })
         // expect(error).to.be.null;
         // expect(selectResult).to.have.length(1);

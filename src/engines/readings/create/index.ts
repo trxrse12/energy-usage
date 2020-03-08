@@ -7,7 +7,7 @@ export const createReadingEngine: EngineType = async (reading) => {
   let operationalResult = false;
   let insertResult: unknown;
   // if valid energy reading
-  if (isValidEnergyReadingPayload(reading)){
+  if (isValidEnergyReadingPayload(reading!)){
     // start preparing the reading insertion
     const insertSql: string =
       `INSERT INTO meter_reads (cumulative, reading_date, unit)

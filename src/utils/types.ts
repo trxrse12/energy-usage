@@ -11,8 +11,8 @@ export interface EnergyReadingPayload {
 // type needed to typecheck the structures used in decoupling engine from handlers for each route
 export type HandlerReturnType = Promise<void>;
 export type HandlerType =
-  (ctx: ExtendableContext, next: TAnyPromise, db: DbType, engine: EngineType, validator: ValidatorType) => HandlerReturnType;
-export type EngineType = (energyReading: EnergyReadingPayload, db: DbType, validator: ValidatorType) => Promise<boolean> | Promise<unknown>;
+  (ctx: ExtendableContext, next: TAnyPromise, db: DbType, engine: EngineType, validator?: ValidatorType) => HandlerReturnType;
+export type EngineType = (energyReading?: EnergyReadingPayload, db?: DbType, validator?: ValidatorType) => Promise<boolean> | Promise<unknown>;
 export type ValidatorType = (energyReading: EnergyReadingPayload) => boolean;
 
 export type HandlerToEngineMap = Map<HandlerType, EngineType>;
@@ -24,5 +24,5 @@ export type HandlerInjecter = (
   handler: HandlerType,
   db: DbType,
   handlerToEngineMap: HandlerToEngineMap,
-  handlerToValidatorMap: HandlerToValidatorMap) =>
+  handlerToValidatorMap?: HandlerToValidatorMap) =>
     (ctx: ExtendableContext, next: TAnyPromise) => unknown;

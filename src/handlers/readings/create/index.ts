@@ -1,13 +1,9 @@
-import {ExtendableContext, Response} from 'koa';
-import moment from 'moment';
 import {
   DatabaseSavingOperationFailureException,
   InvalidRequestPayloadException,
   UnknownInternalErrorException,
 } from "../../../validators/errors/custom-errors";
-import {createReadingEngine} from "../../../engines/readings/create";
-import {isValidEnergyReadingPayload} from "../../../validators/readings/create";
-import {DbType, EnergyReadingPayload, HandlerType, TAnyPromise} from "../../../utils/types";
+import {EnergyReadingPayload, HandlerType} from "../../../utils/types";
 
 // the actual reading insertion handler
 export const createReadingHandler: HandlerType = async (
@@ -16,7 +12,7 @@ export const createReadingHandler: HandlerType = async (
   const readingPayload = ctx?.request?.body as unknown as EnergyReadingPayload;
   try {
     // checking the shape of the request payload to conform to the EnergyReadingPayload format
-    if (!validator(readingPayload)){
+    if (!validator!(readingPayload)){
       throw new InvalidRequestPayloadException(); // custom validation error
     }
   } catch (e) {
