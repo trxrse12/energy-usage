@@ -82,7 +82,9 @@ Notes:
     b. the engine, having a single role to actually insert the reading;
     c. the validator, having the single role of checking that the posted structure is a valid electricity reading;
     
-7. Once the new scalable architecture is in place (see point 6.), add unit tests to test the validator, the engine and the rute handler. Also add unit tests for the middleware.    
+7. Once the new scalable architecture is in place (see point 6.), add unit tests to test the validator, the engine and the rute handler. Also add unit tests for the middleware (not very detailed in here, just some simple examples).
+
+8. add the next end point, GET /allReadings    
          
     
 Obs. Here are some practical observations:

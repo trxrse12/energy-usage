@@ -12,7 +12,7 @@ export const createReadingEngine: EngineType = async (reading) => {
     const insertSql: string =
       `INSERT INTO meter_reads (cumulative, reading_date, unit)
         VALUES ('${reading?.cumulative}', '${reading?.readingDate}', '${reading?.unit}');`
-    const showTableSql = `SELECT * FROM dbname.sqlite_master WHERE type='table';`;
+    // const showTableSql = `SELECT * FROM dbname.sqlite_master WHERE type='table';`;
     try {
       insertResult = await promisifiedRun(insertSql);
       // check to see the value is saved
