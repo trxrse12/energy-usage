@@ -87,7 +87,11 @@ Notes:
 
 8. add the next end point, GET /readings, with the associated E2E tests (for the sake of brevity, skipped the associated unit tests, as they will be similar to the POST /readings)
 
-9. add the next end point, GET /monthly    
+9. add the next end point, GET /monthly
+    a. developed an interpolation algorithm as per below:
+        Starting from a list of energy readings, for each reading build an interpolated value corresponding
+        to the end of month that the reading belongs to.
+    b. build the E2E tests for this end point, then build the engine and the handler for it.          
          
     
 Obs. Here are some practical observations:

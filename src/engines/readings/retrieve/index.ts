@@ -1,6 +1,4 @@
-import {connection} from "../../../data";
 import {EngineType} from "../../../utils/types";
-import {ExtendableContext} from "koa";
 import {promisifiedAll} from "../../../utils";
 
 export const retrieveAllReadingsEngine: EngineType = async () => {

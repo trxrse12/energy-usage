@@ -1,7 +1,6 @@
 import {interpolateEnergyReadings, sortReadings, getDiffInDays, InterpolatedGrid} from "./index";
 import {EnergyReadingPayload} from "../../../../utils/types";
 import moment from 'moment';
-import _ from 'lodash';
 import {expect} from 'chai';
 
 let validSetOfReadings = [
