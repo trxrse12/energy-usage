@@ -1,11 +1,12 @@
 import {HandlerType} from "../../../utils/types";
 
-export const retrieveAllReadingsHandler: HandlerType = async (
+export const retrieveUsageHandler: HandlerType = async (
   ctx, next, db: unknown, engine) => {
   try {
-    const readings = await engine();
+    const usage = await engine();
+    console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ usage=', usage)
     ctx.body = {
-      data: {message: JSON.parse(JSON.stringify(readings))},
+      data: {message: JSON.parse(JSON.stringify(usage))},
     };
     ctx.response.status = 200;
     ctx.set('content-type', 'application/json')

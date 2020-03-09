@@ -8,6 +8,8 @@ import { createReadingHandler } from '../handlers/readings/create'
 import { createReadingEngine } from '../engines/readings/create';
 import { retrieveAllReadingsEngine } from '../engines/readings/retrieve';
 import { retrieveAllReadingsHandler } from '../handlers/readings/retrieve'
+import { retrieveUsageEngine } from '../engines/readings/retrieveUsage';
+import { retrieveUsageHandler } from '../handlers/readings/retrieveUsage'
 import {HandlerType, EngineType, HandlerToEngineMap, HandlerToValidatorMap, HandlerInjecter} from "../utils/types";
 import {create} from "domain";
 import {isValidEnergyReadingPayload} from "../validators/readings/create";
@@ -16,6 +18,7 @@ import {isValidEnergyReadingPayload} from "../validators/readings/create";
 const handlerToEngineMap: HandlerToEngineMap = new Map();
 handlerToEngineMap.set(createReadingHandler, createReadingEngine);
 handlerToEngineMap.set(retrieveAllReadingsHandler, retrieveAllReadingsEngine);
+handlerToEngineMap.set(retrieveUsageHandler, retrieveUsageEngine);
 
 const handlerToValidatorMap: HandlerToValidatorMap = new Map();
 handlerToValidatorMap.set(createReadingHandler, isValidEnergyReadingPayload);
@@ -33,6 +36,15 @@ router.get('/readings', async(ctx, next) => {
     await injectionResult(ctx, next);
     await next();
 });
+
+router.get('/usage', async(ctx, next) => {
+  const injectionResult = injectHandlerDependencies(
+    retrieveUsageHandler, 'CONNECTION', handlerToEngineMap);
+  await injectionResult(ctx, next);
+  await next();
+});
+
+
 export {
   router
 };

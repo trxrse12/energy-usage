@@ -1,4 +1,4 @@
-Feature: General
+Feature: Basic checks on the incoming requests
 
   Scenario Outline: POST, PUT and PATCH requests should have non-empty payloads
 

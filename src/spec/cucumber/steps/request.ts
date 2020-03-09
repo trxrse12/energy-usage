@@ -45,6 +45,10 @@ When('the client creates a GET request to /readings', function(){
   request = superagent('GET', 'http://localhost:3000/readings');
 });
 
+When('the client creates a GET request to /usage', function(){
+  request = superagent('GET', 'http://localhost:3000/usage');
+});
+
 When('attaches a generic empty payload', function(){
   return undefined;
 });
@@ -88,13 +92,13 @@ When('sends the request', function(cb){
   // @ts-ignore
   request
     .then((response) => {
-      console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
+      // console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT response=', response)
       result = response?.body;
       header = response?.header;
       cb();
     })
     .catch((errResponse) =>{
-      console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
+      // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorResponse=', errResponse);
       error = errResponse.response as unknown as ApiError;
       errorMessage = errResponse.message;
       // console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE errorMessage=', errorMessage);
