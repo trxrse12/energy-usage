@@ -1,4 +1,4 @@
-import {interpolateEnergyReadings, sortReadings, getDiffInDays} from "./index";
+import {interpolateEnergyReadings, sortReadings, getDiffInDays, InterpolatedGrid} from "./index";
 import {EnergyReadingPayload} from "../../../../utils/types";
 import moment from 'moment';
 import _ from 'lodash';
@@ -138,40 +138,42 @@ describe('function sortReadings', () => {
 });
 
 describe('buildLimitsOfMonth function', () => {
+  let setOfInterpolatedReadings: InterpolatedGrid = [];
   describe('when called with a valid set of energy readings', () => {
-    it('should produce an array of pairs representing the [beginning,end] of months surrounding the readings', () => {
-      const setOfInterpolatedReadings = interpolateEnergyReadings(validSetOfReadings);
-      console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS setOfInterpolatedReadings=', setOfInterpolatedReadings);
+    it('should produce an array of pairs having the same length as the original data', () => {
+      setOfInterpolatedReadings = interpolateEnergyReadings(validSetOfReadings);
       expect(setOfInterpolatedReadings.length).to.be.equal(validSetOfReadings.length);
+    });
+    it('should report correct interpolation dates', () => {
+      // check the dates in the interpolated output are correct (against the model built in Excel)
       setOfInterpolatedReadings.forEach((reading, idx: number) => {
-          // check if date of interpolated reading is correct (against the manually calculated reading
-          // console.log('RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR reading[0]=', reading[0].utc().toISOString());
-          // console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT interpolatedSetOfReadings[idx].readingDate=', interpolatedSetOfReadings[idx].readingDate);
-
-        // check the dates in the interpolated output are correct (against the model built in Excel)
         const getDiffInDaysValue = getDiffInDays(reading[0], moment(interpolatedSetOfReadings[idx].readingDate));
-          // console.log('UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU getDiffInDaysValue=', getDiffInDaysValue)
-          // console.log('')
         expect(getDiffInDaysValue).to.be.equal(0);
-
-
+      });
+    });
+    it('should report interpolated values are within less than 1% from the correct values', () => {
+      setOfInterpolatedReadings.forEach((reading, idx: number) => {
         // check the interpolated values are within less than 1% from the correct values (as per the Excel model)
         if (reading[1]) { // not undefined
-          console.log('MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM reading[0]', reading[0])
           expect(Math.abs(moment(reading[1]).unix()/moment(interpolatedSetOfReadings[idx].cumulative!).unix())).to.be.closeTo(1, 0.01);
         }
-
-        // check the interpolated value for a reading that happens during the last day of the month is
-        //  that exact value
+      });
+    });
+    it(`should report the interpolated value for a reading that happens during the last day of the month is
+          that exact value`, () => {
+      setOfInterpolatedReadings.forEach((reading, idx: number) => {
         if (idx === 9){
           expect(Math.abs(reading[1]!/interpolatedSetOfReadings[9].cumulative!)).to.be.closeTo(1,0.02);
         }
-
-        // last but not least check the non-interpolable values are undefined
+      });
+    });
+    it('should report non-interpolable values as undefined', () => {
+      setOfInterpolatedReadings.forEach((reading, idx: number) => {
+// last but not least check the non-interpolable values are undefined
         if (idx === 13) {
           expect(reading[1]).to.be.undefined;
         }
-      })
+      });
     });
   });
 });

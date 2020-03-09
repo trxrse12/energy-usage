@@ -9,7 +9,7 @@ type EnergyReading = number | undefined;
 type EndOfMonthForEnergyReading = [moment.Moment, EnergyReading];
 
 // A simple structure that will ease the energy interpolation algorithm:
-type InterpolatedGrid = EndOfMonthForEnergyReading[];
+export type InterpolatedGrid = EndOfMonthForEnergyReading[];
 
 const getDiffInMonths = (mmt1: moment.Moment, mmt2: moment.Moment) => {
   return mmt1.diff(mmt2, 'months');
