@@ -1,9 +1,10 @@
 import sampleData from '../../../../../sampleData.json';
-import {interpolateEndOfMonth, sortReadings} from "./index";
+import {buildLimitsOfMonth, sortReadings} from "./index";
 import {EnergyReadingPayload} from "../../../../utils/types";
 import moment from 'moment';
 import _ from 'lodash';
 import {expect} from 'chai';
+import set = Reflect.set;
 
 let validSetOfReadings = [
   { cumulative: 17580,
@@ -27,9 +28,9 @@ let validSetOfReadings = [
   { cumulative: 18620,
     readingDate: '2017-08-31T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 19887,
-    readingDate: '2018-01-23T00:00:00.000Z',
-    unit: 'kWh' },
+  // { cumulative: 19887,                       INTENTIONALLY ELIMINATED
+  //   readingDate: '2018-01-23T00:00:00.000Z',
+  //   unit: 'kWh' },
   { cumulative: 18905,
     readingDate: '2017-10-27T00:00:00.000Z',
     unit: 'kWh' },
@@ -48,9 +49,6 @@ let validSetOfReadings = [
   { cumulative: 20406,
     readingDate: '2018-03-14T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 100000,
-    readingDate: '3000-01-01T00:00:00.000Z',
-    unit: 'kWh' }
 ] as unknown as EnergyReadingPayload[];
 let invalidSetOfReadingsArray = [
   null,
@@ -89,10 +87,24 @@ describe('function sortReadings', () => {
     it('should return a time sorted set of readings', () => {
       expect(sortedReadings.length).to.be.greaterThan(0);
       sortedReadings.forEach((sortedReading) =>  {
-        console.log('><><><><>', sortedReading)
-        console.log('>>>>>>>>',moment(sortedReading.readingDate).isValid())
+        // console.log('><><><><>', sortedReading)
+        // console.log('>>>>>>>>',moment(sortedReading.readingDate).isValid())
         expect(sortedReadings.length).to.be.equal(validSetOfReadings.length);
       })
     });
   });
 });
+
+describe('buildLimitsOfMonth function', () => {
+  describe('when called with a valid set of energy readings', () => {
+    it('should produce an array of pairs representing the [beginning,end] of months surrounding the readings', () => {
+      const setOfTuples = buildLimitsOfMonth(validSetOfReadings);
+      expect(setOfTuples.length).to.be.equal(validSetOfReadings.length);
+      setOfTuples.forEach((tuple) => {
+        expect(moment(tuple[0]).diff(moment(tuple[0]).startOf("month"))).to.be.equal(0);
+        expect(moment(tuple[1]).diff(moment(tuple[1]).endOf("month"))).to.be.equal(0);
+      })
+    });
+  });
+});
+

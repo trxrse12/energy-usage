@@ -3,6 +3,7 @@ Time: [To be completed]
 Obs. 
 1. No previous experience on Koa (only Express)
 2. No previous knowledge of sqlite3 (however, knowledgable in terms of SQL)
+3. No previous knowledge of moment()
 
 Notes:
     The project developement is split in separate independent features, to ensure a scalable and robust approach.
