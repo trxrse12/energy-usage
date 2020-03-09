@@ -3,58 +3,21 @@ import _ from 'lodash';
 import moment from 'moment';
 import {isValidEnergyReadingPayload} from "../../../../validators/readings/create";
 
-/**
- * Check whether a moment object is the end of the month.
- * Ignore the time part.
- * @param {moment} mmt
- */
-function isEndOfMonth(mmt: moment.MomentInput) {
-  // startOf allows to ignore the time component
-  // we call moment(mmt) because startOf and endOf mutate the momentj object.
-  return moment
-    .utc(mmt)
-    .startOf('day')
-    .isSame(
-      moment
-        .utc(mmt)
-        .endOf('month')
-        .startOf('day'),
-    );
+type EnergyReading = number | undefined;
+
+// A tuple type: [end_of_month_for_that_reading, interpolated_energy_reading_value]
+type EndOfMonthForEnergyReading = [moment.Moment, EnergyReading];
+
+// A simple structure that will ease the energy interpolation algorithm:
+type InterpolatedGrid = EndOfMonthForEnergyReading[];
+
+const getDiffInMonths = (mmt1: moment.Moment, mmt2: moment.Moment) => {
+  return mmt1.diff(mmt2, 'months');
 }
 
-/**
- * Returns the difference between two moment objects in number of days.
- * @param {moment} mmt1
- * @param {moment} mmt2
- */
-function getDiffInDays(mmt1: moment.Moment, mmt2: moment.MomentInput) {
+export const getDiffInDays = (mmt1: moment.Moment, mmt2: moment.Moment) => {
   return mmt1.diff(mmt2, 'days');
-}
-
-/**
- * Return the number of days between the given moment object
- * and the end of the month of this moment object.
- * @param {moment} mmt
- */
-function getDaysUntilMonthEnd(mmt: moment.MomentInput) {
-  return getDiffInDays(moment.utc(mmt).endOf('month'), mmt);
-}
-
-type InterpolationGrid = [moment.Moment[], moment.Moment[]];
-
-// build a function that returns a regular grid of
-export const buildLimitsOfMonth = (energyReadings: EnergyReadingPayload[]): InterpolationGrid => {
-  const sortedReadings = sortReadings(energyReadings);
-  const interpolationStartDatesGrid: moment.Moment[] = [];
-  const interpolationEndDatesGrid: moment.Moment[] = [];
-  sortedReadings.forEach((reading, idx: number) => {
-    interpolationStartDatesGrid[idx] = moment(reading.readingDate).startOf('month');
-    interpolationEndDatesGrid[idx] = moment(reading.readingDate).endOf('month');
-  });
-  const zippedGrid = _.zip(interpolationStartDatesGrid, interpolationEndDatesGrid) as unknown as InterpolationGrid;
-  return zippedGrid;
 };
-
 
 // sort readings ascendingly by the time reading
 export const sortReadings = (energyReadings: EnergyReadingPayload[]): EnergyReadingPayload[] => {
@@ -63,4 +26,39 @@ export const sortReadings = (energyReadings: EnergyReadingPayload[]): EnergyRead
     return _.orderBy(energyReadings, (reading: any) => moment(reading.readingDate).unix(), ['asc']);
   }
   return [];
+};
+
+
+// build a function that returns the interpolated values
+// Obs. The interpolation algorithm will return a set of pairs, [endOfMonths, interpolatedReading]
+//    Special cases:
+//    1. when there is not possible to interpolate the end of the month reading (because there is no reading
+//        for the subsequent month, the interpolated value is simply "undefined", but IS actually being reported
+//    2. when there is NO reading for a samople month, that month is NOT actually being reported
+export const interpolateEnergyReadings = (energyReadings: EnergyReadingPayload[]): InterpolatedGrid => {
+  const sortedReadings = sortReadings(energyReadings);
+  const interpolatedGrid: InterpolatedGrid = [];
+  sortedReadings.forEach((reading, idx: number, readings) => {
+    const endOfMonth: moment.Moment = moment(reading.readingDate).endOf('month').utc();
+    const isNextMonthValueMissing = readings[idx+1]?.readingDate
+      && moment(reading.readingDate).endOf('month').add(1).endOf('month').isBefore(moment(readings[idx+1].readingDate));
+    // save the reading value as the interpolated value if the reading correspond to the last day of the month
+    if (getDiffInDays(moment(reading.readingDate), moment(reading.readingDate).endOf('month'))===0){
+      return interpolatedGrid[idx] = [endOfMonth, reading.cumulative];
+    };
+    // in the cases where the reading is NOT reported the last day of the month
+    if (!isNextMonthValueMissing){ // then if there is a valid subsequent reading for next month, interpolate!
+      const v1 = readings[idx+1] ? readings[idx+1].cumulative : undefined;
+      const v0 = reading.cumulative;
+      const M1 = endOfMonth.unix();
+      const d0 = moment(reading.readingDate).unix();
+      const d1 = readings[idx+1] ? moment(readings[idx+1].readingDate).unix() : undefined;
+      const interpolatedValue: number|undefined =
+        v1 && d1 ? (v1 -v0) * (M1 - d0)/(d1 -d0) + v0 : undefined;
+      return interpolatedGrid[idx] = [endOfMonth, interpolatedValue]
+    } else { // when there is no subsequent value reading for next month
+      return interpolatedGrid[idx] = [endOfMonth, undefined]
+    }
+  });
+  return interpolatedGrid;
 };
