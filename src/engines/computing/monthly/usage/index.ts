@@ -93,7 +93,7 @@ export const interpolateEnergyReadings = (energyReadings: EnergyReadingPayload[]
       }
     }
   });
- // console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO energyConsumptionGrid=', energyConsumptionGrid)
+ console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO energyConsumptionGrid=', energyConsumptionGrid)
   return energyConsumptionGrid!;
 
 };
