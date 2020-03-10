@@ -9,6 +9,7 @@
     "build-types": "babel src --out-dir dist --extensions \".ts,.tsx,\" --source-maps --copy-files",
     "build": "yarn clean && yarn type-check && yarn build-types",
     "serve": "yarn build && node dist/index.js",
+    "test": "yarn run test:unit && yarn run test:e2e",
     "test:e2e": "yarn run build && npx cucumber-js dist/spec/cucumber/features --require-module @babel/register --require dist/spec/cucumber/steps",
     "test:e2e:one": "yarn run build && npx cucumber-js dist/spec/cucumber/features/readings/retrieve/readingsAll.feature --require-module @babel/register --require dist/spec/cucumber/steps",
     "test:unit": "yarn run build && mocha --exit -r ts-node/register --watch-extensions ts src/**/*.unit.test.ts",
