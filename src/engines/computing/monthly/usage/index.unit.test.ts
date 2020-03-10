@@ -1,5 +1,5 @@
-import {interpolateEnergyReadings, sortReadings, getDiffInDays, InterpolatedGrid} from "./index";
-import {EnergyReadingPayload} from "../../../../utils/types";
+import {interpolateEnergyReadings, sortReadings, getDiffInDays} from "./index";
+import {EndOfMonthForEnergyReading, EnergyReadingPayload, InterpolatedGrid} from "../../../../utils/types";
 import moment from 'moment';
 import {expect} from 'chai';
 
@@ -48,49 +48,47 @@ let validSetOfReadings = [
     unit: 'kWh' },
 ] as unknown as EnergyReadingPayload[];
 let interpolatedSetOfReadings = [
-  { cumulative: 17609.83,
-    readingDate: '2017-03-31T00:00:00.000Z',
-    unit: 'kWh' },
-  { cumulative: 17917.48,
+  // { cumulative: 17609.83,
+  //   readingDate: '2017-03-31T00:00:00.000Z',
+  //   unit: 'kWh' },
+  { cumulative: 307.65,
     readingDate: '2017-04-30T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 18152.34,
+  { cumulative: 234.86,
     readingDate: '2017-05-31T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 18321.07,
+  { cumulative: 168.73,
     readingDate: '2017-06-30T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 18453,
+  { cumulative: 127.85,
     readingDate: '2017-07-31T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 18620,
+  { cumulative: 167,
     readingDate: '2017-08-31T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 18776.89,
+  { cumulative: 161.4,
     readingDate: '2017-09-30T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 19027.5,
+  { cumulative: 276.7,
     readingDate: '2017-10-31T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 19385.82,
+  { cumulative: 336.32,
     readingDate: '2017-11-30T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: 19967,
+  { cumulative: 272.18,
     readingDate: '2017-12-31T00:00:00.000Z',
     unit: 'kWh' },
   // { cumulative: undefined,                 // THIS VALUE SHOULD NOT APPEAR IN THE OUTPUTS AT ALL
-  //   readingDate: '2018-01-31T00:00:00.000Z',
+  //   readingDate: '2018-01-31T00:00:00.000Z', // AS IT IS UNDEFINED
   //   unit: 'kWh' },
-  { cumulative: 20335.39,
-    readingDate: '2018-02-28T00:00:00.000Z',
-    unit: 'kWh' },
-  { cumulative: 20533.13,
+  { cumulative: undefined,
+    readingDate: '2018-02-28T00:00:00.000Z', // THIS VALUE SHOULD APPEAR IN THE OUTPUTS as UNDEFINED
+    unit: 'kWh' },                           // AS THE PREVIOUS MONTH READING IS UNDEFINED
+  { cumulative: 197.74,
     readingDate: '2018-03-31T00:00:00.000Z',
     unit: 'kWh' },
-  { cumulative: undefined,
-    readingDate: '2018-04-30T00:00:00.000Z',
-    unit: 'kWh' },
 ];
+// let monthlyInterpolatedReadings =
 let invalidSetOfReadingsArray = [
   null,
   undefined,
@@ -136,43 +134,48 @@ describe('function sortReadings', () => {
   });
 });
 
-describe('buildLimitsOfMonth function', () => {
+describe('interpolateEnergyReadings function', () => {
   let setOfInterpolatedReadings: InterpolatedGrid = [];
   describe('when called with a valid set of energy readings', () => {
-    it('should produce an array of pairs having the same length as the original data', () => {
+    beforeEach(() => {
       setOfInterpolatedReadings = interpolateEnergyReadings(validSetOfReadings);
-      expect(setOfInterpolatedReadings.length).to.be.equal(validSetOfReadings.length);
+    });
+    it('should produce an array of pairs having length equal to the number of months that can be calculated', () => {
+      expect(setOfInterpolatedReadings.length).to.be.equal(11);
     });
     it('should report correct interpolation dates', () => {
       // check the dates in the interpolated output are correct (against the model built in Excel)
-      setOfInterpolatedReadings.forEach((reading, idx: number) => {
+      setOfInterpolatedReadings.forEach((reading: EndOfMonthForEnergyReading, idx: number) => {
         const getDiffInDaysValue = getDiffInDays(reading[0], moment(interpolatedSetOfReadings[idx].readingDate));
         expect(getDiffInDaysValue).to.be.equal(0);
       });
     });
-    it('should report interpolated values are within less than 1% from the correct values', () => {
-      setOfInterpolatedReadings.forEach((reading, idx: number) => {
+    it('should report interpolated values are within less than 2% from the correct values', () => {
+      setOfInterpolatedReadings.forEach((reading: EndOfMonthForEnergyReading, idx: number) => {
+        // console.log('IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII reading=', reading)
         // check the interpolated values are within less than 1% from the correct values (as per the Excel model)
-        if (reading[1]) { // not undefined
-          expect(Math.abs(moment(reading[1]).unix()/moment(interpolatedSetOfReadings[idx].cumulative!).unix())).to.be.closeTo(1, 0.01);
-        }
-      });
-    });
-    it(`should report the interpolated value for a reading that happens during the last day of the month is
-          that exact value`, () => {
-      setOfInterpolatedReadings.forEach((reading, idx: number) => {
-        if (idx === 9){
-          expect(Math.abs(reading[1]!/interpolatedSetOfReadings[9].cumulative!)).to.be.closeTo(1,0.02);
+        if (reading[2]) { // not undefined
+          expect(Math.abs(reading[2]/interpolatedSetOfReadings[idx].cumulative!)).to.be.closeTo(1, 0.02);
         }
       });
     });
     it('should report non-interpolable values as undefined', () => {
-      setOfInterpolatedReadings.forEach((reading, idx: number) => {
+      setOfInterpolatedReadings.forEach((reading: EndOfMonthForEnergyReading, idx: number) => {
 // last but not least check the non-interpolable values are undefined
-        if (idx === 13) {
+//         console.log('IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII reading=', reading)
+        if (idx === 11) {
           expect(reading[1]).to.be.undefined;
         }
       });
+    });
+  });
+});
+
+describe('calculateEnergyUsage() function', () => {
+  describe('when called with a valid set of monthly interpolated readings', () => {
+    it('should return a valid set of monthly electricity usage figures', () => {
+      // const monthlyUsageFigures = calculateEnergyUsage(validSetOfReadings);
+
     });
   });
 });

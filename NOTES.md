@@ -1,9 +1,14 @@
-Time: [To be completed]
+Time: 1 week (intermitent work ==> see below)
 
 Obs. 
 1. No previous experience on Koa (only Express)
-2. No previous knowledge of sqlite3 (however, knowledgable in terms of SQL)
+2. No previous knowledge of sqlite3 (however, knowledgeable in terms of SQL)
 3. No previous knowledge of moment()
+
+The API:
+    POST /readings ==> allows the user to post a new energy reading
+    GET /reading   ==> allows the user to retrieve the whole set of energy readings
+    GET /usage     ==> allows the user to retrieve the whole set of monthly energy usage
 
 Notes:
     The project developement is split in separate independent features, to ensure a scalable and robust approach.
@@ -106,3 +111,6 @@ Lessons learned on Koa:
     1. middlewares have to be async functions that end in "await next()";
     2. error handler middleware is the first middleware, not the last (due to generators)
     3. you can console the incoming request with ctx.request.body, NOT with ctx.body
+    
+Dev risk log:
+    1. moment.diff() is unstable, I proved is reporting incorrect results    

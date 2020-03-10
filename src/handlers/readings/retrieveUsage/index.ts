@@ -4,7 +4,6 @@ export const retrieveUsageHandler: HandlerType = async (
   ctx, next, db: unknown, engine) => {
   try {
     const usage = await engine();
-    console.log('QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ usage=', usage)
     ctx.body = {
       data: {message: JSON.parse(JSON.stringify(usage))},
     };

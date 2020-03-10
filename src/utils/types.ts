@@ -1,4 +1,5 @@
 import {ExtendableContext} from "koa";
+import moment from "moment";
 
 export type TAnyPromise = () => Promise<any>;
 
@@ -26,3 +27,11 @@ export type HandlerInjecter = (
   handlerToEngineMap: HandlerToEngineMap,
   handlerToValidatorMap?: HandlerToValidatorMap) =>
     (ctx: ExtendableContext, next: TAnyPromise) => unknown;
+
+
+// A tuple type: [end_of_month_for_that_reading, interpolated_energy_reading_value]
+export type EndOfMonthForEnergyReading =
+  [moment.Moment, EnergyReading|undefined, EnergyReading|undefined];
+// A simple structure that will ease the energy interpolation algorithm:
+export type InterpolatedGrid = EndOfMonthForEnergyReading[];
+export type EnergyReading = number | undefined;
